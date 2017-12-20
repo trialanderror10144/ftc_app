@@ -130,53 +130,28 @@ public class AutonomousMain extends OpMode {
             break;
 
             case 1:
+                if (.02 > getStateRuntime()) {
+                    glyphLift.raiseLiftPowerUp();
+                }
+                jCSensor.zeroSensorValues();
+                readCamera();
                 readMenuParameters();
-                if (allianceColor == RED_ALLIANCE && position == LEFT_SQUARE && camera.getCryptoKey() == LEFT) {
+                if (allianceColor == RED_ALLIANCE && position == LEFT_SQUARE) {
                     stateCurrent = 100;
                 }
-                if (allianceColor == RED_ALLIANCE && position == LEFT_SQUARE && camera.getCryptoKey() == CENTER) {
+                if (allianceColor == RED_ALLIANCE && position == RIGHT_SQUARE) {
                     stateCurrent = 200;
                 }
-                if (allianceColor == RED_ALLIANCE && position == LEFT_SQUARE && camera.getCryptoKey() == RIGHT) {
+
+                if (allianceColor == BLUE_ALLIANCE && position == LEFT_SQUARE) {
                     stateCurrent = 300;
                 }
-
-
-                if (allianceColor == RED_ALLIANCE && position == RIGHT_SQUARE && camera.getCryptoKey() == LEFT) {
+                if (allianceColor == BLUE_ALLIANCE && position == RIGHT_SQUARE) {
                     stateCurrent = 400;
                 }
-                if (allianceColor == RED_ALLIANCE && position == RIGHT_SQUARE && camera.getCryptoKey() == CENTER) {
-                    stateCurrent = 500;
-                }
-                if (allianceColor == RED_ALLIANCE && position == RIGHT_SQUARE && camera.getCryptoKey() == RIGHT) {
-                    stateCurrent = 600;
-                }
 
-
-                if (allianceColor == BLUE_ALLIANCE && position == LEFT_SQUARE && camera.getCryptoKey() == LEFT) {
-                    stateCurrent = 700;
-                }
-                if (allianceColor == BLUE_ALLIANCE && position == LEFT_SQUARE && camera.getCryptoKey() == CENTER) {
-                    stateCurrent = 800;
-                }
-                if (allianceColor == BLUE_ALLIANCE && position == LEFT_SQUARE && camera.getCryptoKey() == RIGHT) {
-                    stateCurrent = 900;
-                }
-
-
-                if (allianceColor == BLUE_ALLIANCE && position == RIGHT_SQUARE && camera.getCryptoKey() == LEFT) {
-                    stateCurrent = 1000;
-                }
-                if (allianceColor == BLUE_ALLIANCE && position == RIGHT_SQUARE && camera.getCryptoKey() == CENTER) {
-                    stateCurrent = 1100;
-                }
-                if (allianceColor == BLUE_ALLIANCE && position == RIGHT_SQUARE && camera.getCryptoKey() == RIGHT) {
-                    stateCurrent = 1200;
-                }
-                break;
-
-            //If we have stateCurrent values of 100, 200, 300, 400, 500, 600, use values 1 and 2
-            //For others, use values 3 and 4
+            //If we have stateCurrent values of 100, 200, use values 1 and 3
+            //For 300 and 400, use values 2 and 4
 
 
             /* ______    _____    ______
@@ -267,105 +242,6 @@ public class AutonomousMain extends OpMode {
                 break;
 
             case 401:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 4.1) stateCurrent++;
-                break;
-
-
-
-
-            case 500:
-                jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 3.5) stateCurrent++;
-                break;
-
-            case 501:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 4.1) stateCurrent++;
-                break;
-
-
-
-            case 600:
-                jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 3.5) stateCurrent++;
-                break;
-
-            case 601:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 4.1) stateCurrent++;
-                break;
-
-
-
-            case 700:
-                jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 3.5) stateCurrent++;
-                break;
-
-            case 701:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 4.1) stateCurrent++;
-                break;
-
-
-
-
-            case 800:
-                jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 3.5) stateCurrent++;
-                break;
-
-            case 801:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 4.1) stateCurrent++;
-                break;
-
-
-
-
-            case 900:
-                jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 3.5) stateCurrent++;
-                break;
-
-            case 901:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 4.1) stateCurrent++;
-                break;
-
-
-
-            case 1000:
-                jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 3.5) stateCurrent++;
-                break;
-
-            case 1001:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 4.1) stateCurrent++;
-                break;
-
-
-
-            case 1100:
-                jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 3.5) stateCurrent++;
-                break;
-
-            case 1101:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 4.1) stateCurrent++;
-                break;
-
-
-
-            case 1200:
-                jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 3.5) stateCurrent++;
-                break;
-
-            case 1201:
                 jCSensor.getJewelColor();
                 if (getStateRuntime() > 4.1) stateCurrent++;
                 break;

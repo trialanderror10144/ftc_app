@@ -2,19 +2,21 @@ package com.trialanderror.robothandlers;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class RelicGrabber {
 
     private DcMotor extendMotor;
-    private DcMotor angleMotor;
+    private Servo leftGrab;
+    private Servo rightGrab;
 
     private int grabberPos;
-
 
     public RelicGrabber(HardwareMap aHardwareMap) {
 
         extendMotor = aHardwareMap.dcMotor.get("extend");
-        angleMotor = aHardwareMap.dcMotor.get("angle");
+        leftGrab = aHardwareMap.servo.get("leftgrab");
+        rightGrab = aHardwareMap.servo.get("rightgrab");
 
     }
 

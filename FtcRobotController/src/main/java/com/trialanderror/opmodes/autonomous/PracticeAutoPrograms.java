@@ -90,6 +90,9 @@ public class PracticeAutoPrograms extends OpMode {
 
         switch (stateCurrent) {
             case 0:
+                if (.02 > getStateRuntime()) {
+                    glyphLift.raiseLiftPowerUp();
+                }
                 glyphLift.closeAuto();
                 jCSensor.zeroSensorValues();
                 readMenuParameters();
@@ -129,9 +132,6 @@ public class PracticeAutoPrograms extends OpMode {
                     stateCurrent++;
                 }
                 break;
-
-
-
 
 
 

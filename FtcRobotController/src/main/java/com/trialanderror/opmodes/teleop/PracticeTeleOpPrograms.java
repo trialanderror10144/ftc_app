@@ -1,6 +1,5 @@
 package com.trialanderror.opmodes.teleop;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.trialanderror.robothandlers.Drivetrain;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -30,9 +29,7 @@ public class PracticeTeleOpPrograms extends OpMode {
     private static final double TURNING_SCALAR = 0.875;
     private static final double SLOW_DRIVE_SCALAR = .15;
     private static final double MIN_POWER_REG = 0.35;
-    private static final double MIN_POWER_SLOW = 0.05;
-    private double finalLeft;
-    private double finalRight;
+    //private static final double MIN_POWER_SLOW = 0.05;
 
     @Override
     public void init() {

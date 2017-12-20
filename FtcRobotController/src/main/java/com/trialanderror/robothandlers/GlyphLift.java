@@ -11,15 +11,16 @@ public class GlyphLift {
     Servo leftSide;
     Servo rightSide;
 
-    private static final double LEFT_OPEN = 0.055;
-    private static final double LEFT_CLOSED = 0.591;
-    private static final double LEFT_MID = .323;
-    private static final double LEFT_BARELY = .501;
+    private static final double LEFT_OPEN = .518;
+    private static final double LEFT_CLOSED = 0.56;
+    private static final double LEFT_MID = .537;
+    private static final double LEFT_BARELY = .551;
 
-    private static final double RIGHT_OPEN = .648;
-    private static final double RIGHT_CLOSED =  0.1235;
-    private static final double RIGHT_MID = 0.38575;
-    private static final double RIGHT_BARELY = .2135;
+
+    private static final double RIGHT_OPEN = .515;
+    private static final double RIGHT_CLOSED =  0.478;
+    private static final double RIGHT_MID = 0.498;
+    private static final double RIGHT_BARELY = .486;
 
     private double leftPosition;
     private double rightPosition;
