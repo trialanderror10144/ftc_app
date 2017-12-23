@@ -74,6 +74,12 @@ public class PracticeAutoPrograms extends OpMode {
         jCSensor = new JewelColorSensor(hardwareMap.colorSensor.get("csensor"), 0x03c);
         pRSensor = new PanelRangeSensor((hardwareMap));
 
+        try {
+            camera = new VuforiaCameraRegister();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         OptionMenu.Builder ParamsBuilder = new OptionMenu.Builder(hardwareMap.appContext);
         SingleSelectCategory teamAllianceColor = new SingleSelectCategory("Alliance Color");
         teamAllianceColor.addOption("Red");
@@ -109,10 +115,14 @@ public class PracticeAutoPrograms extends OpMode {
                 if (getStateRuntime() > 1.0) stateCurrent++;
                 break;
             case 101:
+                readCamera();
+                if (getStateRuntime() > 4.0) stateCurrent++;
+                break;
+            case 102:
                 jCSensor.getJewelColor();
                 if (getStateRuntime() > 1.0) stateCurrent++;
                 break;
-            case 102:
+            case 103:
                 CompareAllianceJewel();
                 if (jewelOption == 1) {
                     //v drivetrain.
@@ -125,7 +135,7 @@ public class PracticeAutoPrograms extends OpMode {
                     stateCurrent++;
                 }
                 break;
-            case 103:
+            case 104:
                 jewelKnocker.changeGoUp();
                 drivetrain.setPowerWithoutAcceleration(0,0);
                 if (getStateRuntime() > 1.0) {
@@ -141,13 +151,19 @@ public class PracticeAutoPrograms extends OpMode {
             case 200:
                 jewelKnocker.changeGoDown();
                 if (getStateRuntime() > 1.0) stateCurrent++;
+                break;
 
             case 201:
+                readCamera();
+                if (getStateRuntime() > 4.0) stateCurrent++;
+                break;
+
+            case 202:
                 jCSensor.getJewelColor();
                 if (getStateRuntime() > 1.0) stateCurrent++;
                 break;
 
-            case 202:
+            case 203:
                 CompareAllianceJewel();
                 if (jewelOption == 2) {
                     //v drivetrain.
@@ -161,7 +177,7 @@ public class PracticeAutoPrograms extends OpMode {
                 }
                 break;
 
-            case 203:
+            case 204:
                 jewelKnocker.changeGoUp();
                 drivetrain.setPowerWithoutAcceleration(0,0);
                 if (getStateRuntime() > 1.0) {
@@ -181,6 +197,7 @@ public class PracticeAutoPrograms extends OpMode {
         telemetry.addData("Run Time:", getStateRuntime());
         telemetry.addData("Switch Statement: ", stateCurrent);
         telemetry.addData("Jewel Option:", jewelOption);
+        telemetry.addData("Crypto Pos:", camera.getCryptoKey());
     }
 
     public void stop() {
@@ -218,7 +235,7 @@ public class PracticeAutoPrograms extends OpMode {
         }
 
     }
-
-
-
+    public CryptoKeys readCamera() {
+        return camera.getCryptoKey();
+    }
 }

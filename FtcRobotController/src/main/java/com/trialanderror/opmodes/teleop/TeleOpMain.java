@@ -13,10 +13,12 @@ import com.trialanderror.robothandlers.RelicGrabber;
 @TeleOp(name="TeleOp Main")
 public class TeleOpMain extends OpMode {
 
-   /* private DcMotor leftFront;
+    /*
+    private DcMotor leftFront;
     private DcMotor rightFront;
     private DcMotor leftBack;
-    private DcMotor rightBack; */
+    private DcMotor rightBack;
+    */
 
     private Drivetrain drivetrain;
     private JewelKnocker jewelKnocker;
@@ -30,7 +32,7 @@ public class TeleOpMain extends OpMode {
     private static final double MIN_POWER_REG = 0.3;
     private static final double MIN_POWER_SLOW = 0.05;
 
-    //Am I actually gonna use these??? Like seriously, the program works, so why should I bother??????????
+    //Am I actually gonna use these??? Like seriously, the pro
     private double finalLeft;
     private double finalRight;
 
@@ -47,7 +49,6 @@ public class TeleOpMain extends OpMode {
         */
 
         jewelKnocker.initServoPos();
-
     }
     @Override
     public void loop() {
