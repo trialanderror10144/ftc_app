@@ -11,7 +11,6 @@ public class JewelKnocker {
     private static final double UP_POSITION = 0.098;
     private static final double DOWN_POSITION = 0.403;
 
-    private double JewelPos;
 
     public JewelKnocker(HardwareMap aHardwareMap){
 

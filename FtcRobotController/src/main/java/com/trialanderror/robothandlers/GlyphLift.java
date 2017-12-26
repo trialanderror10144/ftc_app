@@ -12,18 +12,18 @@ public class GlyphLift {
     CRServo leftSide;
     CRServo rightSide;
 
-    private static final double LEFT_OPEN = 0.055;
-    private static final double LEFT_CLOSED = 0.44;
+    private static final double LEFT_OPEN = 0.02;
+    private static final double LEFT_CLOSED = .09;
 
 
-    private static final double RIGHT_OPEN = 0.025;
-    private static final double RIGHT_CLOSED =  -0.44;
+    private static final double RIGHT_OPEN = 0.07;
+    private static final double RIGHT_CLOSED = -.1  ;
 
 
     private static final double LEFT_MID = .537;
     private static final double LEFT_BARELY = .551;
-    private static final double RIGHT_MID = -0.498;
-    private static final double RIGHT_BARELY = -.486;
+    private static final double RIGHT_MID = 0.498;
+    private static final double RIGHT_BARELY = .486;
 
     private double leftPosition;
     private double rightPosition;
@@ -46,12 +46,12 @@ public class GlyphLift {
     public void leftChangePos(double delta) {
         leftPosition += delta;
         leftPosition = Range.clip(leftPosition, LEFT_OPEN, LEFT_CLOSED);
-       // leftSide.setPosition(leftPosition);
+        leftSide.setPower(leftPosition);
     }
     public void rightChangePos(double delta) {
         rightPosition += delta;
         rightPosition = Range.clip(rightPosition, RIGHT_CLOSED, RIGHT_OPEN);
-       // rightSide.setPosition(rightPosition);
+        rightSide.setPower(rightPosition);
     }
     public void closeAuto() {
         leftSide.setPower(LEFT_CLOSED);
