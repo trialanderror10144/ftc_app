@@ -7,19 +7,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class RelicGrabber {
 
     private DcMotor extendMotor;
-    private Servo leftGrab;
-    private Servo rightGrab;
+    private Servo grabRelic;
+    private Servo twistRelic;
 
+    private static final double OPEN_CLAMP = 0.0;
+    private static final double CLOSE_CLAMP = .5;
     private int grabberPos;
 
     public RelicGrabber(HardwareMap aHardwareMap) {
 
         extendMotor = aHardwareMap.dcMotor.get("extend");
-        leftGrab = aHardwareMap.servo.get("leftgrab");
-        rightGrab = aHardwareMap.servo.get("rightgrab");
+        grabRelic = aHardwareMap.servo.get("grabr");
+        twistRelic = aHardwareMap.servo.get("twistr");
 
     }
-
     public void horizontalMove() {
         extendMotor.setPower(0.5);
     }
@@ -28,5 +29,11 @@ public class RelicGrabber {
     }
     public void noHorizMove() {
         extendMotor.setPower(0.0);
+    }
+    public void openRelic() {
+        grabRelic.setPosition(OPEN_CLAMP);
+    }
+    public void clampRelic(){
+        grabRelic.setPosition(CLOSE_CLAMP);
     }
 }
