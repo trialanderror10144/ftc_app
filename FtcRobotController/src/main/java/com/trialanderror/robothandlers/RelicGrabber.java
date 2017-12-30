@@ -8,11 +8,16 @@ public class RelicGrabber {
 
     private DcMotor extendMotor;
     private Servo grabRelic;
+
     private Servo twistRelic;
 
     private static final double OPEN_CLAMP = 0.0;
     private static final double CLOSE_CLAMP = .5;
-    private int grabberPos;
+    private static final double TWIST_UP = .0;
+    private static final double TWIST_DOWN = .5;
+
+    private static final int ENCODER_PORT_1 = 1;
+
 
     public RelicGrabber(HardwareMap aHardwareMap) {
 
@@ -20,20 +25,27 @@ public class RelicGrabber {
         grabRelic = aHardwareMap.servo.get("grabr");
         twistRelic = aHardwareMap.servo.get("twistr");
 
+        extendMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //grabRelic.setPosition(CLOSE_CLAMP);
+        //twistRelic.setPosition(TWIST_UP);
     }
     public void horizontalMove() {
-        extendMotor.setPower(0.5);
+        extendMotor.setPower(0.7);
     }
     public void horizontalRetract() {
-        extendMotor.setPower(-0.5);
+        extendMotor.setPower(-0.7);
     }
     public void noHorizMove() {
         extendMotor.setPower(0.0);
     }
-    public void openRelic() {
+    public int extendDistanceEncoder(){
+        return extendMotor.getCurrentPosition();
+    }
+   /* public void openRelic() {
         grabRelic.setPosition(OPEN_CLAMP);
     }
     public void clampRelic(){
         grabRelic.setPosition(CLOSE_CLAMP);
-    }
+    } */
 }

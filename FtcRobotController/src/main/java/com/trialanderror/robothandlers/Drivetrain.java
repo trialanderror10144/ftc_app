@@ -206,7 +206,6 @@ public class Drivetrain {
 
     public void stop() {
         wheelAccelerationThread.stop();
-        //Method code omitted from this page because it has been already documented earlier.
     }
 
 }

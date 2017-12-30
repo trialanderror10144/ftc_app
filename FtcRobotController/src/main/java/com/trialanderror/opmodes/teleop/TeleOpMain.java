@@ -8,86 +8,110 @@ import com.trialanderror.robothandlers.Drivetrain;
 import com.trialanderror.robothandlers.GlyphLift;
 import com.trialanderror.robothandlers.JewelKnocker;
 import com.trialanderror.robothandlers.RelicGrabber;
-
+import com.trialanderror.sensorhandlers.LiftTouchSensor;
 
 @TeleOp(name="TeleOp Main")
 public class TeleOpMain extends OpMode {
 
-    /*
-    private DcMotor leftFront;
-    private DcMotor rightFront;
-    private DcMotor leftBack;
-    private DcMotor rightBack;
-    */
-
+    //Defines Motors and Servos
     private Drivetrain drivetrain;
     private JewelKnocker jewelKnocker;
     private GlyphLift glyphLift;
     private RelicGrabber relicGrabber;
 
+    //Defines Sensors
+    private LiftTouchSensor liftTouchSensor;
+
+    //Defines Values For Power and Threshold
     private static final double STICK_DIGITAL_THRESHOLD = 0.25;
-    private static final double DELTA_SERVO = 0.04;
+    //private static final double DELTA_SERVO = 0.04;
     private static final double TURNING_SCALAR = 0.875;
     private static final double SLOW_DRIVE_SCALAR = .15;
-    private static final double MIN_POWER_REG = 0.3;
-    private static final double MIN_POWER_SLOW = 0.05;
+    private static final double MIN_POWER_REG = 0.38;
+    //private static final double MIN_POWER_SLOW = 0.10;
 
-    //Am I actually gonna use these??? Like seriously, the pro
-    private double finalLeft;
-    private double finalRight;
+    private static final double GRABBER_RETRACT = 1000;
+
+    private int toggleClamp;
+    private int toggleTwist;
 
     @Override
     public void init() {
         drivetrain = new Drivetrain((hardwareMap));
         jewelKnocker = new JewelKnocker((hardwareMap));
         glyphLift = new GlyphLift((hardwareMap));
+        relicGrabber = new RelicGrabber((hardwareMap));
 
-    /*  leftFront = hardwareMap.dcMotor.get("leftFront");
-        leftBack = hardwareMap.dcMotor.get("leftBack");
-        rightFront = hardwareMap.dcMotor.get("rightFront");
-        rightBack = hardwareMap.dcMotor.get("rightBack");
-        */
+        liftTouchSensor = new LiftTouchSensor((hardwareMap));
 
-        jewelKnocker.initServoPos();
+        //jewelKnocker.initServoPos();
+        toggleClamp = 0;
+        toggleTwist = 0;
     }
     @Override
     public void loop() {
 
+        //Glyph Grabbers Code/Control
         if (gamepad1.a) {
             glyphLift.closeAuto();
-            // glyphLift.leftChangePos(DELTA_SERVO);
-            // glyphLift.rightChangePos(-DELTA_SERVO);
         }
         if (gamepad1.b) {
             glyphLift.openAuto();
-            //glyphLift.leftChangePos(-DELTA_SERVO);
-            //glyphLift.rightChangePos(DELTA_SERVO);
+        }
+        if (gamepad1.x) {
+            glyphLift.midAuto();
+        }
+        if (gamepad1.y) {
+            glyphLift.bOpenAuto();
         }
 
-        if (gamepad1.dpad_down) {
+
+        //Lift Control, Acts in Correct and NOT OPPOSITE Direction
+        if (gamepad1.dpad_down && liftTouchSensor.isLowered()) {
+            glyphLift.stop();
+        } else if (gamepad1.dpad_up || (gamepad1.dpad_up && liftTouchSensor.isLowered())) {
             glyphLift.raiseLiftPowerUp();
-        } else if (gamepad1.dpad_up) {
+        } else if (gamepad1.dpad_down) {
             glyphLift.lowerLiftPowerDown();
         } else {
             glyphLift.stop();
         }
 
-      /*  float leftY = -gamepad1.left_stick_y;
-        float rightY = -gamepad1.right_stick_y;
-        leftFront.setPower(leftY);
-        leftBack.setPower(leftY);
-        rightFront.setPower(-rightY);
-        rightBack.setPower(-rightY); */
+
+        //Relic Extender/Motor Control
+        if (gamepad2.dpad_up) {
+            relicGrabber.horizontalMove();
+        } else if (gamepad2.dpad_down) {
+            relicGrabber.horizontalRetract();
+        } else {
+            relicGrabber.noHorizMove();
+        }
+
+/*
+        //Relic Grabber (Servos) Control
+        if (gamepad2.a) {
+            toggleClamp += 1;
+        }
+        if (gamepad2.b) {
+            toggleTwist += 1;
+        }
+
+        if ((toggleClamp % 2) == 1) {
+            relicGrabber.openRelic();
+        }
+        if ((toggleClamp % 2) == 0) {
+            relicGrabber.clampRelic();
+        } */
+
+
 
         if (slowDrive(gamepad1)) {
-            drivetrain.setMinimumMotorPower(0.10);
+            drivetrain.setMinimumMotorPower(0.15);
 
             if ((-gamepad1.left_stick_y < 0) == (-gamepad1.right_stick_y) < 0)
                 drivetrain.setPower(-gamepad1.left_stick_y * SLOW_DRIVE_SCALAR, -gamepad1.right_stick_y * SLOW_DRIVE_SCALAR);
             else
                 drivetrain.setPower(-gamepad1.left_stick_y * SLOW_DRIVE_SCALAR * TURNING_SCALAR, -gamepad1.right_stick_y * SLOW_DRIVE_SCALAR * TURNING_SCALAR);
-
-
         }
         else {
             drivetrain.setMinimumMotorPower(MIN_POWER_REG);
@@ -98,19 +122,16 @@ public class TeleOpMain extends OpMode {
                 drivetrain.setPower(-gamepad1.left_stick_y * TURNING_SCALAR, -gamepad1.right_stick_y * TURNING_SCALAR);
         }
 
+        telemetry.addData("RelicArm Distance:", relicGrabber.extendDistanceEncoder());
     }
-
-
-
-
     @Override
     public void stop(){
         drivetrain.stop();
-
+        glyphLift.stop();
+        //relicGrabber.noHorizMove();
+        glyphLift.openAuto();
     }
-
     private boolean slowDrive(Gamepad aGamepad) {
         return (aGamepad.left_trigger > STICK_DIGITAL_THRESHOLD || aGamepad.right_trigger > STICK_DIGITAL_THRESHOLD);
     }
-
 }

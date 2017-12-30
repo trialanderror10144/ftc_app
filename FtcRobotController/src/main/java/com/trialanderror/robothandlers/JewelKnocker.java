@@ -6,24 +6,22 @@ import com.qualcomm.robotcore.hardware.ServoController;
 
 public class JewelKnocker {
 
-    Servo JewelKnocker;
+    private Servo jewelKnocker;
 
     private static final double UP_POSITION = 0.098;
     private static final double DOWN_POSITION = 0.403;
 
-
     public JewelKnocker(HardwareMap aHardwareMap){
-
-        JewelKnocker = aHardwareMap.servo.get("knocker");
+        jewelKnocker = aHardwareMap.servo.get("knocker");
         initServoPos();
     }
     public void initServoPos() {
-        JewelKnocker.setPosition(UP_POSITION);
+        jewelKnocker.setPosition(UP_POSITION);
     }
     public void changeGoDown() {
-        JewelKnocker.setPosition(DOWN_POSITION);
+        jewelKnocker.setPosition(DOWN_POSITION);
     }
     public void changeGoUp() {
-        JewelKnocker.setPosition(UP_POSITION);
+        jewelKnocker.setPosition(UP_POSITION);
     }
 }

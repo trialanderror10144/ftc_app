@@ -5,7 +5,7 @@ import com.trialanderror.hardwarehandlers.AccelerationMotor;
  * Created by Esposito's 9-16 on 11/7/2017.
  */
 
-public class AccelerationThread implements Runnable{
+public class AccelerationThread implements Runnable {
 
     private static final int MAX_MOTORS = 8;
     private static final int UPDATES_PER_SECOND = 100;

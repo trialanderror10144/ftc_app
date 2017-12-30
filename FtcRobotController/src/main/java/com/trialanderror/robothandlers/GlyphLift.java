@@ -8,30 +8,33 @@ import com.qualcomm.robotcore.util.Range;
 
 public class GlyphLift {
 
-    DcMotor  liftG;
-    CRServo leftSide;
-    CRServo rightSide;
-
-    private static final double LEFT_OPEN = 0.02;
-    private static final double LEFT_CLOSED = .09;
+    private DcMotor  liftG;
+    private Servo leftSide;
+    private Servo rightSide;
 
 
-    private static final double RIGHT_OPEN = 0.07;
-    private static final double RIGHT_CLOSED = -.1  ;
+    private static final double LEFT_START = .17;
+    private static final double RIGHT_START = .81;
+
+    private static final double LEFT_OPEN = 0.20;
+    private static final double LEFT_CLOSED = 0.79;
+    private static final double LEFT_MID = .47;
+    private static final double LEFT_BARELY = .69;
 
 
-    private static final double LEFT_MID = .537;
-    private static final double LEFT_BARELY = .551;
-    private static final double RIGHT_MID = 0.498;
-    private static final double RIGHT_BARELY = .486;
+    private static final double RIGHT_OPEN = 0.77;
+    private static final double RIGHT_CLOSED = 0.21;
+    private static final double RIGHT_MID = 0.5015;
+    private static final double RIGHT_BARELY = .27;
+
 
     private double leftPosition;
     private double rightPosition;
 
     public GlyphLift(HardwareMap aHardwareMap) {
 
-        leftSide = aHardwareMap.crservo.get("leftGrip");
-        rightSide = aHardwareMap.crservo.get("rightGrip");
+        leftSide = aHardwareMap.servo.get("leftGrip");
+        rightSide = aHardwareMap.servo.get("rightGrip");
         liftG = aHardwareMap.dcMotor.get("glyphLift") ;
 
         liftG.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -39,35 +42,35 @@ public class GlyphLift {
     }
 
     public void initServoPos() {
-        leftSide.setPower(LEFT_OPEN);
-        rightSide.setPower(RIGHT_OPEN);
+        leftSide.setPosition(LEFT_START);
+        rightSide.setPosition(RIGHT_START);
     }
 
     public void leftChangePos(double delta) {
         leftPosition += delta;
         leftPosition = Range.clip(leftPosition, LEFT_OPEN, LEFT_CLOSED);
-        leftSide.setPower(leftPosition);
+        leftSide.setPosition(leftPosition);
     }
     public void rightChangePos(double delta) {
         rightPosition += delta;
         rightPosition = Range.clip(rightPosition, RIGHT_CLOSED, RIGHT_OPEN);
-        rightSide.setPower(rightPosition);
+        rightSide.setPosition(rightPosition);
     }
     public void closeAuto() {
-        leftSide.setPower(LEFT_CLOSED);
-        rightSide.setPower(RIGHT_CLOSED);
+        leftSide.setPosition(LEFT_CLOSED);
+        rightSide.setPosition(RIGHT_CLOSED);
     }
     public void openAuto() {
-        leftSide.setPower(LEFT_OPEN);
-        rightSide.setPower(RIGHT_OPEN);
+        leftSide.setPosition(LEFT_OPEN);
+        rightSide.setPosition(RIGHT_OPEN);
     }
     public void midAuto() {
-        leftSide.setPower(LEFT_MID);
-        rightSide.setPower(RIGHT_MID);
+        leftSide.setPosition(LEFT_MID);
+        rightSide.setPosition(RIGHT_MID);
     }
     public void bOpenAuto() {
-        leftSide.setPower(LEFT_BARELY);
-        rightSide.setPower(RIGHT_BARELY);
+        leftSide.setPosition(LEFT_BARELY);
+        rightSide.setPosition(RIGHT_BARELY);
     }
     public void raiseLiftPowerUp() {
         liftG.setPower(-0.5);
