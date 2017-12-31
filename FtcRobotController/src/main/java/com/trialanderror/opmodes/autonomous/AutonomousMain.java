@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.trialanderror.robothandlers.Drivetrain;
 import com.trialanderror.robothandlers.GlyphLift;
 import com.trialanderror.robothandlers.JewelKnocker;
+import com.trialanderror.robothandlers.RelicGrabber;
 import com.trialanderror.robothandlers.VuforiaCameraRegister;
 
 import com.trialanderror.sensorhandlers.JewelColorSensor;
@@ -44,6 +45,7 @@ public class AutonomousMain extends OpMode {
     //Defines DCMotor Parts
     private GlyphLift glyphLift;
     private Drivetrain drivetrain;
+    private RelicGrabber relicGrabber;
 
     //Defines Servos
     private JewelKnocker jewelKnocker;
@@ -102,6 +104,7 @@ public class AutonomousMain extends OpMode {
         jCSensor = new JewelColorSensor(hardwareMap.colorSensor.get("csensor"), 0x3c);
         frontUltra = new PanelRangeSensor((hardwareMap.i2cDevice.get("rsensorback")), 0x10);
         backUltra = new PanelRangeSensor((hardwareMap.i2cDevice.get("rsensorfront")), 0x28);
+        relicGrabber = new RelicGrabber((hardwareMap));
 
         //Creates Select Menu on Robot Controller
         OptionMenu.Builder ParamsBuilder = new OptionMenu.Builder(hardwareMap.appContext);
@@ -132,11 +135,13 @@ public class AutonomousMain extends OpMode {
                 break;
 
             case 1:
-                if (.02 > getStateRuntime()) {
-                    glyphLift.raiseLiftPowerUp();
+                glyphLift.raiseLiftPowerUp();
+                glyphLift.closeAuto();
+                if (getStateRuntime() > 0.02) {
+                    glyphLift.stop();
                 }
+
                 jCSensor.zeroSensorValues();
-                readCamera();
                 readMenuParameters();
                 if (allianceColor == RED_ALLIANCE && position == LEFT_SQUARE) {
                     stateCurrent = 100;
@@ -167,7 +172,7 @@ public class AutonomousMain extends OpMode {
 
             case 100:
                 jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 1.0) stateCurrent++;
+                if (getStateRuntime() > 0.9) stateCurrent++;
                 break;
             case 101:
                 readCamera();
@@ -203,26 +208,26 @@ public class AutonomousMain extends OpMode {
                 }
                 break;
             case 105:
-                frontUltra.getUltrasonicReading();
+                backUltra.getUltrasonicReading();
                 stateCurrent++;
                 break;
 
             case 106:
                 drivetrain.setPowerWithoutAcceleration(.1,.1);
-                if (readCamera() == LEFT && frontUltra.getUltrasonicReading() >= RED_LEFTS_LEFT) {
+                if (readCamera() == LEFT && backUltra.getUltrasonicReading() >= RED_LEFTS_LEFT) {
                     drivetrain.setPowerWithoutAcceleration(0, 0);
                     stateCurrent++;
                 }
                 //GET OFFICIAL READINGS
-                if (readCamera() == CENTER && frontUltra.getUltrasonicReading() >= RED_LEFTS_CENTER) {
+               /* if (readCamera() == CENTER && frontUltra.getUltrasonicReading() >= RED_LEFTS_CENTER) {
                     drivetrain.setPowerWithoutAcceleration(0, 0);
                     stateCurrent++;
                 }
                 if (readCamera() == RIGHT && frontUltra.getUltrasonicReading() >= RED_LEFTS_RIGHT) {
                     drivetrain.setPowerWithoutAcceleration(0, 0);
                     stateCurrent++;
-                }
-                if (readCamera() == UNKNOWN && frontUltra.getUltrasonicReading() >= RED_LEFTS_LEFT) {
+                } */
+                if (readCamera() == UNKNOWN && backUltra.getUltrasonicReading() >= RED_LEFTS_LEFT) {
                     drivetrain.setPowerWithoutAcceleration(0, 0);
                     stateCurrent++;
                 }
@@ -284,6 +289,8 @@ public class AutonomousMain extends OpMode {
         telemetry.addData("Crypto Pos:", camera.getCryptoKey());
         telemetry.addData("Jewel Color:", jCSensor.getJewelColor());
         telemetry.addData("Jewel Option:", jewelOption);
+        telemetry.addData("Front Range (CM):", frontUltra.getUltrasonicReading());
+        telemetry.addData("Back Range (CM):", backUltra.getUltrasonicReading());
         telemetry.addData("Run Time:", getStateRuntime());
     }
 

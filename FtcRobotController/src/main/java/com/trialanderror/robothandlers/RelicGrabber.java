@@ -9,10 +9,9 @@ public class RelicGrabber {
 
     private DcMotor extendMotor;
     private Servo grabRelic;
-
     private Servo twistRelic;
 
-    private static final double OPEN_CLAMP = 0.10196;
+    private static final double OPEN_CLAMP = 0.07;
     private static final double CLOSE_CLAMP = 0.51;
     private static final double START_CLAMP = 0.54;
 
@@ -21,7 +20,6 @@ public class RelicGrabber {
 
     private static final int ENCODER_PORT_1 = 1;
     private double twistPosition;
-
 
     public RelicGrabber(HardwareMap aHardwareMap) {
 

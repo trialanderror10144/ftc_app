@@ -73,7 +73,6 @@ public class PracticeAutoPrograms extends OpMode {
         jewelKnocker = new JewelKnocker((hardwareMap));
         drivetrain = new Drivetrain((hardwareMap));
         jCSensor = new JewelColorSensor(hardwareMap.colorSensor.get("csensor"), 0x03c);
-        pRSensor = new PanelRangeSensor((hardwareMap));
 
         try {
             camera = new VuforiaCameraRegister();

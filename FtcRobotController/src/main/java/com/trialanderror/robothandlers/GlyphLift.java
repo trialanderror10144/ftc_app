@@ -1,6 +1,5 @@
 package com.trialanderror.robothandlers;
 
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -11,7 +10,6 @@ public class GlyphLift {
     private DcMotor  liftG;
     private Servo leftSide;
     private Servo rightSide;
-
 
     private static final double LEFT_START = .17;
     private static final double RIGHT_START = .81;
@@ -26,7 +24,6 @@ public class GlyphLift {
     private static final double RIGHT_CLOSED = 0.21;
     private static final double RIGHT_MID = 0.5015;
     private static final double RIGHT_BARELY = .27;
-
 
     private double leftPosition;
     private double rightPosition;
