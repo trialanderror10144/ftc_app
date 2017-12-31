@@ -51,7 +51,8 @@ public class AutonomousMain extends OpMode {
     //Defines all Sensors, Addons, and Encoders (if needed)
     private VuforiaCameraRegister camera;
     private JewelColorSensor jCSensor;
-    private PanelRangeSensor pRSensor;
+    private PanelRangeSensor backUltra;
+    private PanelRangeSensor frontUltra;
 
     //Defines Enumeration
     private Alliances allianceColor;
@@ -71,21 +72,21 @@ public class AutonomousMain extends OpMode {
 
     //List of Values for Optical Distance Sensor (Ultrasonic)
 
-    /*public final static double RED_CLOSE_LEFT;
-    public final static double RED_CLOSE_CENTER;
-    public final static double RED_CLOSE_RIGHT;
+    public final static double RED_LEFTS_LEFT = 75.5;
+    /*public final static double RED_LEFTS_CENTER;
+    public final static double RED_LEFTS_RIGHT;
 
-    public final static double RED_FAR_LEFT;
-    public final static double RED_FAR_CENTER;
-    public final static double RED_FAR_RIGHT;
+    public final static double RED_RIGHTS_LEFT;
+    public final static double RED_RIGHTS_CENTER;
+    public final static double RED_RIGHTS_RIGHT;
 
-    public final static double BLUE_CLOSE_LEFT;
-    public final static double BLUE_CLOSE_CENTER;
-    public final static double BLUE_CLOSE_RIGHT;
+    public final static double BLUE_LEFTS_LEFT;
+    public final static double BLUE_LEFTS_CENTER;
+    public final static double BLUE_LEFTS_RIGHT;
 
-    public final static double BLUE_FAR_LEFT;
-    public final static double BLUE_FAR_CENTER;
-    public final static double BLUE_FAR_RIGHT;
+    public final static double BLUE_RIGHTS_LEFT;
+    public final static double BLUE_RIGHTS_CENTER;
+    public final static double BLUE_RIGHTS_RIGHT;
     */
 
     public void init() {
@@ -99,7 +100,8 @@ public class AutonomousMain extends OpMode {
         jewelKnocker = new JewelKnocker((hardwareMap));
         drivetrain = new Drivetrain((hardwareMap));
         jCSensor = new JewelColorSensor(hardwareMap.colorSensor.get("csensor"), 0x3c);
-        pRSensor = new PanelRangeSensor((hardwareMap));
+        frontUltra = new PanelRangeSensor((hardwareMap.i2cDevice.get("rsensorback")), 0x10);
+        backUltra = new PanelRangeSensor((hardwareMap.i2cDevice.get("rsensorfront")), 0x28);
 
         //Creates Select Menu on Robot Controller
         OptionMenu.Builder ParamsBuilder = new OptionMenu.Builder(hardwareMap.appContext);
@@ -126,8 +128,8 @@ public class AutonomousMain extends OpMode {
         switch (stateCurrent) {
 
             case 0:
-                if(runtime.seconds() > delayTime) stateCurrent++;
-            break;
+                if (runtime.seconds() > delayTime) stateCurrent++;
+                break;
 
             case 1:
                 if (.02 > getStateRuntime()) {
@@ -150,8 +152,8 @@ public class AutonomousMain extends OpMode {
                     stateCurrent = 400;
                 }
 
-            //If we have stateCurrent values of 100, 200, use values 1 and 3
-            //For 300 and 400, use values 2 and 4
+                //If we have stateCurrent values of 100, 200, use values 1 and 3
+                //For 300 and 400, use values 2 and 4
 
 
             /* ______    _____    ______
@@ -161,17 +163,19 @@ public class AutonomousMain extends OpMode {
               |  | | |  | ____   | |___| |
               |__| |_|  |_____|  |______|
             */
+
+
             case 100:
                 jewelKnocker.changeGoDown();
                 if (getStateRuntime() > 1.0) stateCurrent++;
                 break;
-
             case 101:
+                readCamera();
                 jCSensor.getJewelColor();
-                if (getStateRuntime() > 1.0) stateCurrent++;
+                if (getStateRuntime() > 4.0) stateCurrent++;
                 break;
-
             case 102:
+                CompareAllianceJewel();
                 if (jewelOption == 1) {
                     //v drivetrain.
                     drivetrain.setPowerWithoutAcceleration(-.2, -.2);
@@ -179,30 +183,52 @@ public class AutonomousMain extends OpMode {
                 if (jewelOption == 3) {
                     drivetrain.setPowerWithoutAcceleration(.2, .2);
                 }
-
-                if (getStateRuntime() > .3) stateCurrent++;
-                break;
-
-            case 103:
-                    drivetrain.setPowerWithoutAcceleration(0.0 ,0.0);
-                    stateCurrent++;
-                break;
-
-            case 104:
-                drivetrain.setPowerWithoutAcceleration(.3, .3);
-                if (stateCurrent > 7.2) {
-                    drivetrain.setPowerWithoutAcceleration(0.0, 0.0);
+                if (getStateRuntime() > .3) {
                     stateCurrent++;
                 }
                 break;
-            case 105:
-                   // pRSensor.getUltrasonicReading();
+            case 103:
+                jewelKnocker.changeGoUp();
+                drivetrain.setPowerWithoutAcceleration(0, 0);
+                if (getStateRuntime() > 1.0) {
                     stateCurrent++;
+                }
                 break;
+
+            case 104:
+                drivetrain.setPowerWithoutAcceleration(.1, .1);
+                if (getStateRuntime() > 1.1) {
+                    stateCurrent++;
+                    drivetrain.setPowerWithoutAcceleration(.1, .1);
+                }
+                break;
+            case 105:
+                frontUltra.getUltrasonicReading();
+                stateCurrent++;
+                break;
+
             case 106:
+                drivetrain.setPowerWithoutAcceleration(.1,.1);
+                if (readCamera() == LEFT && frontUltra.getUltrasonicReading() >= RED_LEFTS_LEFT) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    stateCurrent++;
+                }
+                //GET OFFICIAL READINGS
+                if (readCamera() == CENTER && frontUltra.getUltrasonicReading() >= RED_LEFTS_CENTER) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    stateCurrent++;
+                }
+                if (readCamera() == RIGHT && frontUltra.getUltrasonicReading() >= RED_LEFTS_RIGHT) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    stateCurrent++;
+                }
+                if (readCamera() == UNKNOWN && frontUltra.getUltrasonicReading() >= RED_LEFTS_LEFT) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    stateCurrent++;
+                }
+                break;
 
-
-
+            case 107:
 
 
             case 200:

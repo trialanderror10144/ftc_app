@@ -30,7 +30,7 @@ import static com.trialanderror.fieldhandlers.CryptoKeys.RIGHT;
 import static com.trialanderror.fieldhandlers.CryptoKeys.UNKNOWN;
 import static com.trialanderror.fieldhandlers.JewelColors.RED_JEWEL;
 import static com.trialanderror.fieldhandlers.JewelColors.BLUE_JEWEL;
-
+import static com.trialanderror.fieldhandlers.PositionToWall.LEFT_SQUARE;
 
 
 @Autonomous(name = "practice")
@@ -66,6 +66,7 @@ public class PracticeAutoPrograms extends OpMode {
     private int lastReadRunState;
 
     private int jewelOption;
+    private int keyOption;
 
     public void init() {
         glyphLift = new GlyphLift((hardwareMap));
@@ -88,7 +89,10 @@ public class PracticeAutoPrograms extends OpMode {
         autonomousParamsMenu = ParamsBuilder.create();
         autonomousParamsMenu.show();
 
+        jewelOption = 0;
         stateCurrent = 0;
+        keyOption = 0;
+
         jCSensor.zeroSensorValues();
     }
 
@@ -102,7 +106,7 @@ public class PracticeAutoPrograms extends OpMode {
                 glyphLift.closeAuto();
                 jCSensor.zeroSensorValues();
                 readMenuParameters();
-                if(allianceColor == RED_ALLIANCE) {
+                if(allianceColor == RED_ALLIANCE && position == LEFT_SQUARE) {
                     stateCurrent = 100;
                 }
                 if(allianceColor == BLUE_ALLIANCE) {
@@ -120,7 +124,7 @@ public class PracticeAutoPrograms extends OpMode {
                 break;
             case 102:
                 jCSensor.getJewelColor();
-                if (getStateRuntime() > 1.0) stateCurrent++;
+                if (getStateRuntime() > 3.0) stateCurrent++;
                 break;
             case 103:
                 CompareAllianceJewel();
@@ -198,6 +202,7 @@ public class PracticeAutoPrograms extends OpMode {
         telemetry.addData("Switch Statement: ", stateCurrent);
         telemetry.addData("Jewel Option:", jewelOption);
         telemetry.addData("Crypto Pos:", camera.getCryptoKey());
+        telemetry.addData("Key Option:", keyOption);
     }
 
     public void stop() {
@@ -237,5 +242,19 @@ public class PracticeAutoPrograms extends OpMode {
     }
     public CryptoKeys readCamera() {
         return camera.getCryptoKey();
+    }
+    public void returnStateCamera() {
+        if (readCamera() == LEFT) {
+            keyOption = 1;
+        }
+        if (readCamera() == CENTER) {
+            keyOption = 2;
+        }
+        if (readCamera() == RIGHT) {
+            keyOption = 3;
+        }
+        if (readCamera() == UNKNOWN) {
+            keyOption = 4;
+        }
     }
 }

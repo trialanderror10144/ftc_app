@@ -24,16 +24,13 @@ public class TeleOpMain extends OpMode {
 
     //Defines Values For Power and Threshold
     private static final double STICK_DIGITAL_THRESHOLD = 0.25;
-    //private static final double DELTA_SERVO = 0.04;
+    private static final double DELTA_SERVO = 0.01;
     private static final double TURNING_SCALAR = 0.875;
     private static final double SLOW_DRIVE_SCALAR = .15;
-    private static final double MIN_POWER_REG = 0.38;
+    private static final double MIN_POWER_REG = 0.44;
     //private static final double MIN_POWER_SLOW = 0.10;
 
     private static final double GRABBER_RETRACT = 1000;
-
-    private int toggleClamp;
-    private int toggleTwist;
 
     @Override
     public void init() {
@@ -45,8 +42,6 @@ public class TeleOpMain extends OpMode {
         liftTouchSensor = new LiftTouchSensor((hardwareMap));
 
         //jewelKnocker.initServoPos();
-        toggleClamp = 0;
-        toggleTwist = 0;
     }
     @Override
     public void loop() {
@@ -87,21 +82,22 @@ public class TeleOpMain extends OpMode {
             relicGrabber.noHorizMove();
         }
 
-/*
+
         //Relic Grabber (Servos) Control
         if (gamepad2.a) {
-            toggleClamp += 1;
-        }
-        if (gamepad2.b) {
-            toggleTwist += 1;
-        }
-
-        if ((toggleClamp % 2) == 1) {
             relicGrabber.openRelic();
         }
-        if ((toggleClamp % 2) == 0) {
+        if (gamepad2.b) {
             relicGrabber.clampRelic();
-        } */
+        }
+
+        //x is down, y is up
+        if (gamepad2.x) {
+            relicGrabber.twistDeltaRelic(DELTA_SERVO);
+        }
+        if (gamepad2.y) {
+            relicGrabber.twistDeltaRelic(-DELTA_SERVO);
+        }
 
 
 
@@ -128,7 +124,7 @@ public class TeleOpMain extends OpMode {
     public void stop(){
         drivetrain.stop();
         glyphLift.stop();
-        //relicGrabber.noHorizMove();
+        relicGrabber.noHorizMove();
         glyphLift.openAuto();
     }
     private boolean slowDrive(Gamepad aGamepad) {
