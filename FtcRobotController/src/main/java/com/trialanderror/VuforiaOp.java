@@ -23,8 +23,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 /**
  * Created by Zachary on 9/9/2017.
  */
-@Disabled
-@TeleOp(name = "Vuforia")
+
+@TeleOp(name = "VuforiaOp")
 public class VuforiaOp extends LinearOpMode {
 
 

@@ -33,7 +33,7 @@ import static com.trialanderror.fieldhandlers.JewelColors.BLUE_JEWEL;
 import static com.trialanderror.fieldhandlers.PositionToWall.LEFT_SQUARE;
 
 
-@Autonomous(name = "practice")
+//@Autonomous(name = "practice")
 public class PracticeAutoPrograms extends OpMode {
 
     //Creates dropdown menu for Robot Controller

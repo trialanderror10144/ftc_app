@@ -11,15 +11,16 @@ public class RelicGrabber {
     private Servo grabRelic;
     private Servo twistRelic;
 
-    private static final double OPEN_CLAMP = 0.07;
+    private static final double OPEN_CLAMP = 0.095;
     private static final double CLOSE_CLAMP = 0.51;
     private static final double START_CLAMP = 0.54;
 
-    private static final double TWIST_UP = .04;
+    private static final double TWIST_UP = .042;
     private static final double TWIST_DOWN = 0.1117;
 
     private static final int ENCODER_PORT_1 = 1;
     private double twistPosition;
+    private double clampPosition;
 
     public RelicGrabber(HardwareMap aHardwareMap) {
 
@@ -42,9 +43,6 @@ public class RelicGrabber {
     public void noHorizMove() {
         extendMotor.setPower(0.0);
     }
-    public int extendDistanceEncoder(){
-        return extendMotor.getCurrentPosition();
-    }
     public void openRelic() {
         grabRelic.setPosition(OPEN_CLAMP);
     }
@@ -61,5 +59,15 @@ public class RelicGrabber {
         twistPosition += delta;
         twistPosition = Range.clip(twistPosition, TWIST_UP, TWIST_DOWN);
         twistRelic.setPosition(twistPosition);
+    }
+    public void clampSmallDelta() {
+        clampPosition +=.01;
+        clampPosition = Range.clip(clampPosition, OPEN_CLAMP, CLOSE_CLAMP);
+        grabRelic.setPosition(clampPosition);
+    }
+    public void openSmallDelta() {
+        clampPosition -=.01;
+        clampPosition = Range.clip(clampPosition, OPEN_CLAMP, CLOSE_CLAMP);
+        grabRelic.setPosition(clampPosition);
     }
 }

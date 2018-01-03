@@ -24,24 +24,20 @@ public class TeleOpMain extends OpMode {
 
     //Defines Values For Power and Threshold
     private static final double STICK_DIGITAL_THRESHOLD = 0.25;
-    private static final double DELTA_SERVO = 0.01;
+    private static final double DELTA_SERVO = 0.004;
     private static final double TURNING_SCALAR = 0.875;
     private static final double SLOW_DRIVE_SCALAR = .15;
     private static final double MIN_POWER_REG = 0.44;
-    //private static final double MIN_POWER_SLOW = 0.10;
-
-    private static final double GRABBER_RETRACT = 1000;
+    private static final double MIN_POWER_SLOW = 0.18;
 
     @Override
     public void init() {
+
         drivetrain = new Drivetrain((hardwareMap));
         jewelKnocker = new JewelKnocker((hardwareMap));
         glyphLift = new GlyphLift((hardwareMap));
         relicGrabber = new RelicGrabber((hardwareMap));
-
         liftTouchSensor = new LiftTouchSensor((hardwareMap));
-
-        //jewelKnocker.initServoPos();
     }
     @Override
     public void loop() {
@@ -91,8 +87,17 @@ public class TeleOpMain extends OpMode {
             relicGrabber.clampRelic();
         }
 
+        if (gamepad2.left_bumper) {
+            relicGrabber.clampSmallDelta();
+        }
+        if (gamepad2.right_bumper) {
+            relicGrabber.openSmallDelta();
+        }
+
+
+
         //x is down, y is up
-        if (gamepad2.x) {
+        if (gamepad2.x ) {
             relicGrabber.twistDeltaRelic(DELTA_SERVO);
         }
         if (gamepad2.y) {
@@ -117,8 +122,6 @@ public class TeleOpMain extends OpMode {
             else
                 drivetrain.setPower(-gamepad1.left_stick_y * TURNING_SCALAR, -gamepad1.right_stick_y * TURNING_SCALAR);
         }
-
-        telemetry.addData("RelicArm Distance:", relicGrabber.extendDistanceEncoder());
     }
     @Override
     public void stop(){

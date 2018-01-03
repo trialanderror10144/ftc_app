@@ -74,22 +74,31 @@ public class AutonomousMain extends OpMode {
 
     //List of Values for Optical Distance Sensor (Ultrasonic)
 
-    public final static double RED_LEFTS_LEFT = 75.5;
-    /*public final static double RED_LEFTS_CENTER;
-    public final static double RED_LEFTS_RIGHT;
+    //100
+    public final static double RED_LEFTS_LEFT = 91.0;
+    public final static double RED_LEFTS_CENTER = 107.0;
+    public final static double RED_LEFTS_RIGHT = 123.0;
 
+    /*
+
+    //200
     public final static double RED_RIGHTS_LEFT;
     public final static double RED_RIGHTS_CENTER;
     public final static double RED_RIGHTS_RIGHT;
 
+    //300
     public final static double BLUE_LEFTS_LEFT;
     public final static double BLUE_LEFTS_CENTER;
     public final static double BLUE_LEFTS_RIGHT;
+*/
 
-    public final static double BLUE_RIGHTS_LEFT;
-    public final static double BLUE_RIGHTS_CENTER;
-    public final static double BLUE_RIGHTS_RIGHT;
-    */
+    //The opposite of the Red Left Distances, since its flipped ????? NOT TRUE
+
+    //400
+    public final static double BLUE_RIGHTS_LEFT = 123.0;
+    public final static double BLUE_RIGHTS_CENTER = 107.0;
+    public final static double BLUE_RIGHTS_RIGHT = 91.0;
+
 
     public void init() {
         try {
@@ -102,13 +111,13 @@ public class AutonomousMain extends OpMode {
         jewelKnocker = new JewelKnocker((hardwareMap));
         drivetrain = new Drivetrain((hardwareMap));
         jCSensor = new JewelColorSensor(hardwareMap.colorSensor.get("csensor"), 0x3c);
-        frontUltra = new PanelRangeSensor((hardwareMap.i2cDevice.get("rsensorback")), 0x10);
-        backUltra = new PanelRangeSensor((hardwareMap.i2cDevice.get("rsensorfront")), 0x28);
+        frontUltra = new PanelRangeSensor((hardwareMap.i2cDevice.get("rsensorback")), 0x28);
+        backUltra = new PanelRangeSensor((hardwareMap.i2cDevice.get("rsensorfront")), 0x10);
         relicGrabber = new RelicGrabber((hardwareMap));
 
         //Creates Select Menu on Robot Controller
         OptionMenu.Builder ParamsBuilder = new OptionMenu.Builder(hardwareMap.appContext);
-        NumberCategory delaySelectMenu = new NumberCategory("Delay"); //ALWAYS IN SECONDS
+        //NumberCategory delaySelectMenu = new NumberCategory("Delay"); //ALWAYS IN SECONDS
         SingleSelectCategory teamAllianceColor = new SingleSelectCategory("Alliance Color");
         SingleSelectCategory alliancePosition = new SingleSelectCategory("Position");
         teamAllianceColor.addOption("Red");
@@ -117,7 +126,7 @@ public class AutonomousMain extends OpMode {
         alliancePosition.addOption("Right");
         ParamsBuilder.addCategory(teamAllianceColor);
         ParamsBuilder.addCategory(alliancePosition);
-        ParamsBuilder.addCategory(delaySelectMenu);
+        //ParamsBuilder.addCategory(delaySelectMenu);
         autonomousParamsMenu = ParamsBuilder.create();
         autonomousParamsMenu.show();
 
@@ -127,20 +136,14 @@ public class AutonomousMain extends OpMode {
 
 
     public void loop() {
-
         switch (stateCurrent) {
-
             case 0:
-                if (runtime.seconds() > delayTime) stateCurrent++;
+                glyphLift.closeAuto();
+                drivetrain.stop();
+               if (getStateRuntime() > .9) { stateCurrent++;}
                 break;
 
             case 1:
-                glyphLift.raiseLiftPowerUp();
-                glyphLift.closeAuto();
-                if (getStateRuntime() > 0.02) {
-                    glyphLift.stop();
-                }
-
                 jCSensor.zeroSensorValues();
                 readMenuParameters();
                 if (allianceColor == RED_ALLIANCE && position == LEFT_SQUARE) {
@@ -156,30 +159,148 @@ public class AutonomousMain extends OpMode {
                 if (allianceColor == BLUE_ALLIANCE && position == RIGHT_SQUARE) {
                     stateCurrent = 400;
                 }
+                break;
 
                 //If we have stateCurrent values of 100, 200, use values 1 and 3
                 //For 300 and 400, use values 2 and 4
 
 
-            /* ______    _____    ______
-              |   _  |  | ____|  |  ___ |
-              |  |_| |  | ___    | |   | |
-              |   _  |  | ___|   | |   | |
-              |  | | |  | ____   | |___| |
-              |__| |_|  |_____|  |______|
-            */
-
 
             case 100:
                 jewelKnocker.changeGoDown();
+                glyphLift.raiseLiftPowerUp();
+                if (getStateRuntime() > 0.2) {
+                    glyphLift.stop();
+                }
                 if (getStateRuntime() > 0.9) stateCurrent++;
                 break;
+
             case 101:
+                jCSensor.getJewelColor();
+                if (getStateRuntime() > 2.1) stateCurrent++;
+                break;
+
+            case 102:
+                CompareAllianceJewel();
+                if (jewelOption == 1) {
+                    //v drivetrain.
+                    drivetrain.setPowerWithoutAcceleration(-.2, -.2);
+                }
+                if (jewelOption == 3) {
+                    drivetrain.setPowerWithoutAcceleration(.2, .2);
+                }
+                if (getStateRuntime() > .14) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    drivetrain.stop();
+                    stateCurrent++;
+                }
+                break;
+
+            case 103:
+                jewelKnocker.changeGoUp();
+                if (getStateRuntime() > .5) {
+                    stateCurrent++;
+                }
+                break;
+
+            case 104:
+                drivetrain.setPowerWithoutAcceleration(.26, .26);
+
+                if (jewelOption == 1) {
+                    if (getStateRuntime() > 1.1) {
+                        drivetrain.setPowerWithoutAcceleration(0, 0);
+                        drivetrain.stop();
+                        stateCurrent++;
+                    }
+                }
+                if (jewelOption == 3) {
+                    if (getStateRuntime() > .32) {
+                        drivetrain.setPowerWithoutAcceleration(0, 0);
+                        drivetrain.stop();
+                        stateCurrent++;
+                    }
+                }
+                else {
+                    if (getStateRuntime() > .39) {
+                        drivetrain.setPowerWithoutAcceleration(0, 0);
+                        drivetrain.stop();
+                        stateCurrent++;
+                    }
+                }
+                break;
+
+            case 105:
+                backUltra.getUltrasonicReading();
+                stateCurrent++;
+                break;
+
+            case 106:
+                drivetrain.setPowerWithoutAcceleration(.1,.1);
+                if (readCamera() == LEFT && backUltra.getUltrasonicReading() >= RED_LEFTS_LEFT) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    stateCurrent++;
+                }
+                if (readCamera() == CENTER && backUltra.getUltrasonicReading() >= RED_LEFTS_CENTER) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    stateCurrent++;
+                }
+                if (readCamera() == RIGHT && backUltra.getUltrasonicReading() >= RED_LEFTS_RIGHT) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    stateCurrent++;
+                }
+                if (readCamera() == UNKNOWN && backUltra.getUltrasonicReading() >= RED_LEFTS_LEFT) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    stateCurrent++;
+                }
+                break;
+
+            case 107:
+                drivetrain.setPowerWithoutAcceleration(.65,-.65);
+                if (getStateRuntime() > .64) {
+                    stateCurrent++;
+                }
+                break;
+
+            case 108:
+                drivetrain.setPowerWithoutAcceleration(0,0);
+                stateCurrent++;
+                break;
+
+            case 109:
+                drivetrain.setPowerWithoutAcceleration(.1,.1);
+                if (getStateRuntime()> 1.5) {
+                    stateCurrent++;
+                }
+                break;
+
+            case 110:
+                glyphLift.midAuto();
+                drivetrain.setPowerWithoutAcceleration(-.16, -.16);
+                if (getStateRuntime() > .9) { stateCurrent++; }
+                break;
+
+            case 111:
+                drivetrain.setPowerWithoutAcceleration(0,0);
+                break;
+
+
+
+
+
+
+
+
+
+            case 200:
+                jewelKnocker.changeGoDown();
+                if (getStateRuntime() > 0.9) stateCurrent++;
+                break;
+            case 201:
                 readCamera();
                 jCSensor.getJewelColor();
                 if (getStateRuntime() > 4.0) stateCurrent++;
                 break;
-            case 102:
+            case 202:
                 CompareAllianceJewel();
                 if (jewelOption == 1) {
                     //v drivetrain.
@@ -192,7 +313,7 @@ public class AutonomousMain extends OpMode {
                     stateCurrent++;
                 }
                 break;
-            case 103:
+            case 203:
                 jewelKnocker.changeGoUp();
                 drivetrain.setPowerWithoutAcceleration(0, 0);
                 if (getStateRuntime() > 1.0) {
@@ -200,52 +321,17 @@ public class AutonomousMain extends OpMode {
                 }
                 break;
 
-            case 104:
-                drivetrain.setPowerWithoutAcceleration(.1, .1);
+            case 204:
+                drivetrain.setPowerWithoutAcceleration(-.1, -.1);
                 if (getStateRuntime() > 1.1) {
                     stateCurrent++;
-                    drivetrain.setPowerWithoutAcceleration(.1, .1);
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
                 }
                 break;
-            case 105:
+            case 205:
                 backUltra.getUltrasonicReading();
                 stateCurrent++;
                 break;
-
-            case 106:
-                drivetrain.setPowerWithoutAcceleration(.1,.1);
-                if (readCamera() == LEFT && backUltra.getUltrasonicReading() >= RED_LEFTS_LEFT) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    stateCurrent++;
-                }
-                //GET OFFICIAL READINGS
-               /* if (readCamera() == CENTER && frontUltra.getUltrasonicReading() >= RED_LEFTS_CENTER) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    stateCurrent++;
-                }
-                if (readCamera() == RIGHT && frontUltra.getUltrasonicReading() >= RED_LEFTS_RIGHT) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    stateCurrent++;
-                } */
-                if (readCamera() == UNKNOWN && backUltra.getUltrasonicReading() >= RED_LEFTS_LEFT) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    stateCurrent++;
-                }
-                break;
-
-            case 107:
-
-
-            case 200:
-                jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 3.5) stateCurrent++;
-                break;
-            case 201:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 4.1) stateCurrent++;
-                break;
-
-
 
 
 
@@ -256,26 +342,176 @@ public class AutonomousMain extends OpMode {
 
             case 300:
                 jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 3.5) stateCurrent++;
+                if (getStateRuntime() > 0.9) stateCurrent++;
+                break;
+            case 301:
+                readCamera();
+                jCSensor.getJewelColor();
+                if (getStateRuntime() > 4.0) stateCurrent++;
+                break;
+            case 302:
+                CompareAllianceJewel();
+                if (jewelOption == 2) {
+                    //v drivetrain.
+                    drivetrain.setPowerWithoutAcceleration(-.2, -.2);
+                }
+                if (jewelOption == 4) {
+                    drivetrain.setPowerWithoutAcceleration(.2, .2);
+                }
+                if (getStateRuntime() > .3) {
+                    stateCurrent++;
+                }
+                break;
+            case 303:
+                jewelKnocker.changeGoUp();
+                drivetrain.setPowerWithoutAcceleration(0, 0);
+                if (getStateRuntime() > 1.0) {
+                    stateCurrent++;
+                }
                 break;
 
-            case 301:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 4.1) stateCurrent++;
+            case 304:
+                drivetrain.setPowerWithoutAcceleration(.1, .1);
+                if (getStateRuntime() > 1.1) {
+                    stateCurrent++;
+                    drivetrain.setPowerWithoutAcceleration(.1, .1);
+                }
                 break;
+            case 305:
+                backUltra.getUltrasonicReading();
+                stateCurrent++;
+                break;
+
+
+
+
+
+
+
 
 
 
 
             case 400:
                 jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 3.5) stateCurrent++;
+                glyphLift.raiseLiftPowerUp();
+                if (getStateRuntime() > 0.2) {
+                    glyphLift.stop();
+                }
+                if (getStateRuntime() > 0.9) stateCurrent++;
                 break;
 
             case 401:
                 jCSensor.getJewelColor();
-                if (getStateRuntime() > 4.1) stateCurrent++;
+                if (getStateRuntime() > 2.1) stateCurrent++;
                 break;
+
+            case 402:
+                CompareAllianceJewel();
+                if (jewelOption == 2) {
+                    //v drivetrain.
+                    drivetrain.setPowerWithoutAcceleration(.2, .2);
+                }
+                if (jewelOption == 4) {
+                    drivetrain.setPowerWithoutAcceleration(-.2, -.2);
+                }
+                if (getStateRuntime() > .14) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    drivetrain.stop();
+                    stateCurrent++;
+                }
+                break;
+
+            case 403:
+                jewelKnocker.changeGoUp();
+                if (getStateRuntime() > .5) {
+                    stateCurrent++;
+                }
+                break;
+
+            case 404:
+                drivetrain.setPowerWithoutAcceleration(-.26, -.26);
+                if (jewelOption == 2) {
+                    if (getStateRuntime() > 1.1) {
+                        drivetrain.setPowerWithoutAcceleration(0, 0);
+                        drivetrain.stop();
+                        stateCurrent++;
+                    }
+                }
+                if (jewelOption == 4) {
+                    if (getStateRuntime() > .32) {
+                        drivetrain.setPowerWithoutAcceleration(0, 0);
+                        drivetrain.stop();
+                        stateCurrent++;
+                    }
+                }
+                else {
+                    if (getStateRuntime() > .39) {
+                        drivetrain.setPowerWithoutAcceleration(0, 0);
+                        drivetrain.stop();
+                        stateCurrent++;
+                    }
+                }
+
+                break;
+
+            case 405:
+                frontUltra.getUltrasonicReading();
+                stateCurrent++;
+                break;
+
+            case 406:
+                drivetrain.setPowerWithoutAcceleration(.1,.1);
+                if (readCamera() == LEFT && frontUltra.getUltrasonicReading() >= BLUE_RIGHTS_LEFT) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    stateCurrent++;
+                }
+                if (readCamera() == CENTER && frontUltra.getUltrasonicReading() >= BLUE_RIGHTS_CENTER) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    stateCurrent++;
+                }
+                if (readCamera() == RIGHT && frontUltra.getUltrasonicReading() >= BLUE_RIGHTS_RIGHT) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    stateCurrent++;
+                }
+                if (readCamera() == UNKNOWN && frontUltra.getUltrasonicReading() >= BLUE_RIGHTS_RIGHT) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    stateCurrent++;
+                }
+                break;
+
+            case 407:
+                drivetrain.setPowerWithoutAcceleration(.65,-.65);
+                if (getStateRuntime() > .64) {
+                    stateCurrent++;
+                }
+                break;
+
+            case 408:
+                drivetrain.setPowerWithoutAcceleration(0,0);
+                stateCurrent++;
+                break;
+
+            case 409:
+                drivetrain.setPowerWithoutAcceleration(.1,.1);
+                if (getStateRuntime()> 1.5) {
+                    stateCurrent++;
+                }
+                break;
+
+            case 410:
+                glyphLift.midAuto();
+                drivetrain.setPowerWithoutAcceleration(-.15, -.15);
+                if (getStateRuntime() > .9) { stateCurrent++; }
+                break;
+
+            case 411:
+                drivetrain.setPowerWithoutAcceleration(0,0);
+                break;
+
+
+
+
 
             default:
                 //Fucking Done!!! #EatMyAssGary
@@ -291,7 +527,12 @@ public class AutonomousMain extends OpMode {
         telemetry.addData("Jewel Option:", jewelOption);
         telemetry.addData("Front Range (CM):", frontUltra.getUltrasonicReading());
         telemetry.addData("Back Range (CM):", backUltra.getUltrasonicReading());
-        telemetry.addData("Run Time:", getStateRuntime());
+    }
+    @Override
+    public void stop() {
+        drivetrain.stop();
+        glyphLift.stop();
+        relicGrabber.noHorizMove();
     }
 
     private double getStateRuntime() {
@@ -301,8 +542,6 @@ public class AutonomousMain extends OpMode {
         }
         return runtime.seconds() - lastReadRuntime;
     }
-
-
     public void readMenuParameters() {
         if (autonomousParamsMenu.selectedOption("Alliance Color").equals("Red")) {
             allianceColor = RED_ALLIANCE;
@@ -317,11 +556,11 @@ public class AutonomousMain extends OpMode {
             position = RIGHT_SQUARE;
         }
 
-        try {
+      /*  try {
             delayTime = Integer.parseInt(autonomousParamsMenu.selectedOption("Delay"));
         } catch (NumberFormatException e) {
             delayTime = 0;
-        }
+        } */
 
     }
 
@@ -340,7 +579,6 @@ public class AutonomousMain extends OpMode {
         }
 
     }
-
     public CryptoKeys readCamera() {
         return camera.getCryptoKey();
     }

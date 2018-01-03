@@ -19,7 +19,7 @@ public class JewelColorSensor {
     public JewelColorSensor(ColorSensor aColorSensor, int i2cAddress) {
         colorSensor = aColorSensor;
         colorSensor.setI2cAddress(I2cAddr.create8bit(i2cAddress));
-        colorSensor.enableLed(false);
+        colorSensor.enableLed(true);
 
         virtualZeroRed = 0;
         virtualZeroBlue = 0;
