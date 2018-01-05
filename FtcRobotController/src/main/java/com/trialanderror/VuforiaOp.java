@@ -24,14 +24,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * Created by Zachary on 9/9/2017.
  */
 
-@TeleOp(name = "VuforiaOp")
+//@TeleOp(name = "VuforiaOp")
 public class VuforiaOp extends LinearOpMode {
 
 
     @Override
     public void runOpMode() throws InterruptedException {
         VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
-        params.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        params.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
         params.vuforiaLicenseKey = "AQRRqHr/////AAAAGa+JA7T4hEKQv9WC0GbPjX+BWYM59ffdN82q1f8GKDlqQkxyPZU0m3ubmLxQpWVimHxRvp6tySvoVvHfX78z1CE0OT78O42K+o5VtWmSPgOMPzrWNYRA94pUCSK8BhhWQC+tUKyWUoNa3AczKNAbBi1NVY73kZYPhCpoTHSEgltEX+EU3W9d/BCW+68iH8kIdEofBcY3TvhMwv+QuE2usZ7wJL+s6jBD8lu+frGZEoBBXNycUetiIBDE6dm2a5Z0wO1e7ccBCe6Oah+pTiHyecohuZAHTKmeF0fpRFlpdzCT1qrQuOJhgajCi8gEZZFnrzaMKRcSNYsNj9epcjhseiRSeY/g+asH8oq8oGcCorE1";
         params.cameraMonitorFeedback = VuforiaLocalizer.Parameters.CameraMonitorFeedback.AXES;
 

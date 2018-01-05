@@ -34,7 +34,6 @@ import static com.trialanderror.fieldhandlers.JewelColors.BLUE_JEWEL;;
 import static com.trialanderror.fieldhandlers.PositionToWall.LEFT_SQUARE;
 import static com.trialanderror.fieldhandlers.PositionToWall.RIGHT_SQUARE;
 
-
 @Autonomous(name = "Auto: Main")
 public class AutonomousMain extends OpMode {
 
@@ -168,9 +167,11 @@ public class AutonomousMain extends OpMode {
 
             case 100:
                 jewelKnocker.changeGoDown();
-                glyphLift.raiseLiftPowerUp();
                 if (getStateRuntime() > 0.2) {
                     glyphLift.stop();
+                }
+                else {
+                    glyphLift.raiseLiftPowerUp();
                 }
                 if (getStateRuntime() > 0.9) stateCurrent++;
                 break;
@@ -231,55 +232,142 @@ public class AutonomousMain extends OpMode {
 
             case 105:
                 backUltra.getUltrasonicReading();
-                stateCurrent++;
+                jewelKnocker.changeGoDown();
+                readCamera();
+                if (getStateRuntime() > 4.5) { stateCurrent++; }
                 break;
 
             case 106:
+                if ((readCamera() == LEFT) || (readCamera() == UNKNOWN)) {
+                    stateCurrent = 110;
+                }
+                if (readCamera() == CENTER) {
+                    stateCurrent = 120;
+                }
+                if (readCamera() == RIGHT) {
+                    stateCurrent = 130;
+                }
+                break;
+
+
+            case 110:
+                jewelKnocker.changeGoUp();
                 drivetrain.setPowerWithoutAcceleration(.1,.1);
-                if (readCamera() == LEFT && backUltra.getUltrasonicReading() >= RED_LEFTS_LEFT) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    stateCurrent++;
-                }
-                if (readCamera() == CENTER && backUltra.getUltrasonicReading() >= RED_LEFTS_CENTER) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    stateCurrent++;
-                }
-                if (readCamera() == RIGHT && backUltra.getUltrasonicReading() >= RED_LEFTS_RIGHT) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    stateCurrent++;
-                }
-                if (readCamera() == UNKNOWN && backUltra.getUltrasonicReading() >= RED_LEFTS_LEFT) {
+                if (backUltra.getUltrasonicReading() >= RED_LEFTS_LEFT) {
                     drivetrain.setPowerWithoutAcceleration(0, 0);
                     stateCurrent++;
                 }
                 break;
 
-            case 107:
+            case 111:
                 drivetrain.setPowerWithoutAcceleration(.65,-.65);
                 if (getStateRuntime() > .64) {
                     stateCurrent++;
                 }
                 break;
 
-            case 108:
+            case 112:
                 drivetrain.setPowerWithoutAcceleration(0,0);
                 stateCurrent++;
                 break;
 
-            case 109:
+            case 113:
                 drivetrain.setPowerWithoutAcceleration(.1,.1);
                 if (getStateRuntime()> 1.5) {
                     stateCurrent++;
                 }
                 break;
 
-            case 110:
+            case 114:
                 glyphLift.midAuto();
                 drivetrain.setPowerWithoutAcceleration(-.16, -.16);
                 if (getStateRuntime() > .9) { stateCurrent++; }
                 break;
 
-            case 111:
+            case 115:
+                drivetrain.setPowerWithoutAcceleration(0,0);
+                break;
+
+
+
+
+
+            case 120:
+                jewelKnocker.changeGoUp();
+                drivetrain.setPowerWithoutAcceleration(.1,.1);
+                if (backUltra.getUltrasonicReading() >= RED_LEFTS_CENTER) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    stateCurrent++;
+                }
+                break;
+
+            case 121:
+                drivetrain.setPowerWithoutAcceleration(.65,-.65);
+                if (getStateRuntime() > .64) {
+                stateCurrent++;
+                }
+                break;
+
+            case 122:
+                drivetrain.setPowerWithoutAcceleration(0,0);
+                stateCurrent++;
+                break;
+
+            case 123:
+                drivetrain.setPowerWithoutAcceleration(.1,.1);
+                if (getStateRuntime()> 1.5) {
+                    stateCurrent++;
+                }
+                break;
+
+            case 124:
+                glyphLift.midAuto();
+                drivetrain.setPowerWithoutAcceleration(-.16, -.16);
+                if (getStateRuntime() > .9) { stateCurrent++; }
+                break;
+
+            case 125:
+                drivetrain.setPowerWithoutAcceleration(0,0);
+                break;
+
+
+
+
+            case 130:
+                jewelKnocker.changeGoUp();
+                drivetrain.setPowerWithoutAcceleration(.1,.1);
+                if (backUltra.getUltrasonicReading() >= RED_LEFTS_RIGHT) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    stateCurrent++;
+                }
+                break;
+
+            case 131:
+                drivetrain.setPowerWithoutAcceleration(.65,-.65);
+                if (getStateRuntime() > .64) {
+                    stateCurrent++;
+                }
+                break;
+
+            case 132:
+                drivetrain.setPowerWithoutAcceleration(0,0);
+                stateCurrent++;
+                break;
+
+            case 133:
+                drivetrain.setPowerWithoutAcceleration(.1,.1);
+                if (getStateRuntime()> 1.5) {
+                    stateCurrent++;
+                }
+                break;
+
+            case 134:
+                glyphLift.midAuto();
+                drivetrain.setPowerWithoutAcceleration(-.16, -.16);
+                if (getStateRuntime() > .9) { stateCurrent++; }
+                break;
+
+            case 135:
                 drivetrain.setPowerWithoutAcceleration(0,0);
                 break;
 
@@ -394,9 +482,11 @@ public class AutonomousMain extends OpMode {
 
             case 400:
                 jewelKnocker.changeGoDown();
-                glyphLift.raiseLiftPowerUp();
                 if (getStateRuntime() > 0.2) {
                     glyphLift.stop();
+                }
+                else {
+                    glyphLift.raiseLiftPowerUp();
                 }
                 if (getStateRuntime() > 0.9) stateCurrent++;
                 break;
@@ -431,6 +521,7 @@ public class AutonomousMain extends OpMode {
 
             case 404:
                 drivetrain.setPowerWithoutAcceleration(-.26, -.26);
+
                 if (jewelOption == 2) {
                     if (getStateRuntime() > 1.1) {
                         drivetrain.setPowerWithoutAcceleration(0, 0);
@@ -452,60 +543,146 @@ public class AutonomousMain extends OpMode {
                         stateCurrent++;
                     }
                 }
-
                 break;
 
             case 405:
-                frontUltra.getUltrasonicReading();
-                stateCurrent++;
+                backUltra.getUltrasonicReading();
+                jewelKnocker.changeGoDown();
+                readCamera();
+                if (getStateRuntime() > 4.5) { stateCurrent++; }
                 break;
 
             case 406:
+                if ((readCamera() == LEFT) || (readCamera() == UNKNOWN)) {
+                    stateCurrent = 410;
+                }
+                if (readCamera() == CENTER) {
+                    stateCurrent = 420;
+                }
+                if (readCamera() == RIGHT) {
+                    stateCurrent = 430;
+                }
+                break;
+
+
+            case 410:
+                jewelKnocker.changeGoUp();
                 drivetrain.setPowerWithoutAcceleration(.1,.1);
-                if (readCamera() == LEFT && frontUltra.getUltrasonicReading() >= BLUE_RIGHTS_LEFT) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    stateCurrent++;
-                }
-                if (readCamera() == CENTER && frontUltra.getUltrasonicReading() >= BLUE_RIGHTS_CENTER) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    stateCurrent++;
-                }
-                if (readCamera() == RIGHT && frontUltra.getUltrasonicReading() >= BLUE_RIGHTS_RIGHT) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    stateCurrent++;
-                }
-                if (readCamera() == UNKNOWN && frontUltra.getUltrasonicReading() >= BLUE_RIGHTS_RIGHT) {
+                if (backUltra.getUltrasonicReading() >= BLUE_RIGHTS_LEFT) {
                     drivetrain.setPowerWithoutAcceleration(0, 0);
                     stateCurrent++;
                 }
                 break;
 
-            case 407:
+            case 411:
                 drivetrain.setPowerWithoutAcceleration(.65,-.65);
                 if (getStateRuntime() > .64) {
                     stateCurrent++;
                 }
                 break;
 
-            case 408:
+            case 412:
                 drivetrain.setPowerWithoutAcceleration(0,0);
                 stateCurrent++;
                 break;
 
-            case 409:
+            case 413:
                 drivetrain.setPowerWithoutAcceleration(.1,.1);
                 if (getStateRuntime()> 1.5) {
                     stateCurrent++;
                 }
                 break;
 
-            case 410:
+            case 414:
                 glyphLift.midAuto();
-                drivetrain.setPowerWithoutAcceleration(-.15, -.15);
+                drivetrain.setPowerWithoutAcceleration(-.16, -.16);
                 if (getStateRuntime() > .9) { stateCurrent++; }
                 break;
 
-            case 411:
+            case 415:
+                drivetrain.setPowerWithoutAcceleration(0,0);
+                break;
+
+
+
+
+
+            case 420:
+                jewelKnocker.changeGoUp();
+                drivetrain.setPowerWithoutAcceleration(.1,.1);
+                if (backUltra.getUltrasonicReading() >= BLUE_RIGHTS_CENTER) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    stateCurrent++;
+                }
+                break;
+
+            case 421:
+                drivetrain.setPowerWithoutAcceleration(.65,-.65);
+                if (getStateRuntime() > .64) {
+                    stateCurrent++;
+                }
+                break;
+
+            case 422:
+                drivetrain.setPowerWithoutAcceleration(0,0);
+                stateCurrent++;
+                break;
+
+            case 423:
+                drivetrain.setPowerWithoutAcceleration(.1,.1);
+                if (getStateRuntime()> 1.5) {
+                    stateCurrent++;
+                }
+                break;
+
+            case 424:
+                glyphLift.midAuto();
+                drivetrain.setPowerWithoutAcceleration(-.16, -.16);
+                if (getStateRuntime() > .9) { stateCurrent++; }
+                break;
+
+            case 425:
+                drivetrain.setPowerWithoutAcceleration(0,0);
+                break;
+
+
+
+
+            case 430:
+                jewelKnocker.changeGoUp();
+                drivetrain.setPowerWithoutAcceleration(.1,.1);
+                if (backUltra.getUltrasonicReading() >= BLUE_RIGHTS_RIGHT) {
+                    drivetrain.setPowerWithoutAcceleration(0, 0);
+                    stateCurrent++;
+                }
+                break;
+
+            case 431:
+                drivetrain.setPowerWithoutAcceleration(.65,-.65);
+                if (getStateRuntime() > .64) {
+                    stateCurrent++;
+                }
+                break;
+
+            case 432:
+                drivetrain.setPowerWithoutAcceleration(0,0);
+                stateCurrent++;
+                break;
+
+            case 433:
+                drivetrain.setPowerWithoutAcceleration(.1,.1);
+                if (getStateRuntime()> 1.5) {
+                    stateCurrent++;
+                }
+                break;
+
+            case 434:
+                glyphLift.midAuto();
+                drivetrain.setPowerWithoutAcceleration(-.16, -.16);
+                if (getStateRuntime() > .9) { stateCurrent++; }
+                break;
+
+            case 435:
                 drivetrain.setPowerWithoutAcceleration(0,0);
                 break;
 

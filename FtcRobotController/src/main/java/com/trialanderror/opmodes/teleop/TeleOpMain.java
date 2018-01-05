@@ -25,8 +25,9 @@ public class TeleOpMain extends OpMode {
     //Defines Values For Power and Threshold
     private static final double STICK_DIGITAL_THRESHOLD = 0.25;
     private static final double DELTA_SERVO = 0.004;
-    private static final double TURNING_SCALAR = 0.875;
-    private static final double SLOW_DRIVE_SCALAR = .15;
+    private static final double TURNING_SCALAR = 0.875; //Originally .875
+    private static final double SLOW_DRIVE_SCALAR = .2;
+    private static final double SLOW_DRIVE_TURNING_SCALAR = 2.8;
     private static final double MIN_POWER_REG = 0.44;
     private static final double MIN_POWER_SLOW = 0.18;
 
@@ -39,6 +40,7 @@ public class TeleOpMain extends OpMode {
         relicGrabber = new RelicGrabber((hardwareMap));
         liftTouchSensor = new LiftTouchSensor((hardwareMap));
     }
+
     @Override
     public void loop() {
 
@@ -87,6 +89,7 @@ public class TeleOpMain extends OpMode {
             relicGrabber.clampRelic();
         }
 
+        //Precision for Clamp
         if (gamepad2.left_bumper) {
             relicGrabber.clampSmallDelta();
         }
@@ -94,10 +97,8 @@ public class TeleOpMain extends OpMode {
             relicGrabber.openSmallDelta();
         }
 
-
-
         //x is down, y is up
-        if (gamepad2.x ) {
+        if (gamepad2.x) {
             relicGrabber.twistDeltaRelic(DELTA_SERVO);
         }
         if (gamepad2.y) {
@@ -107,12 +108,12 @@ public class TeleOpMain extends OpMode {
 
 
         if (slowDrive(gamepad1)) {
-            drivetrain.setMinimumMotorPower(0.15);
+            drivetrain.setMinimumMotorPower(0.12);
 
             if ((-gamepad1.left_stick_y < 0) == (-gamepad1.right_stick_y) < 0)
                 drivetrain.setPower(-gamepad1.left_stick_y * SLOW_DRIVE_SCALAR, -gamepad1.right_stick_y * SLOW_DRIVE_SCALAR);
             else
-                drivetrain.setPower(-gamepad1.left_stick_y * SLOW_DRIVE_SCALAR * TURNING_SCALAR, -gamepad1.right_stick_y * SLOW_DRIVE_SCALAR * TURNING_SCALAR);
+                drivetrain.setPower(-gamepad1.left_stick_y * SLOW_DRIVE_SCALAR * SLOW_DRIVE_TURNING_SCALAR, -gamepad1.right_stick_y * SLOW_DRIVE_SCALAR * SLOW_DRIVE_TURNING_SCALAR);
         }
         else {
             drivetrain.setMinimumMotorPower(MIN_POWER_REG);
@@ -130,6 +131,7 @@ public class TeleOpMain extends OpMode {
         relicGrabber.noHorizMove();
         glyphLift.openAuto();
     }
+
     private boolean slowDrive(Gamepad aGamepad) {
         return (aGamepad.left_trigger > STICK_DIGITAL_THRESHOLD || aGamepad.right_trigger > STICK_DIGITAL_THRESHOLD);
     }
