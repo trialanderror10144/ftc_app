@@ -1,5 +1,6 @@
 package com.trialanderror.opmodes.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.trialanderror.robothandlers.Drivetrain;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -12,6 +13,7 @@ import com.trialanderror.sensorhandlers.LiftTouchSensor;
  * Created by Esposito's 9-16 on 11/22/2017.
  */
 
+@Disabled
 @TeleOp(name="TeleOp Practice")
 public class PracticeTeleOpPrograms extends OpMode {
 

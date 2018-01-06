@@ -1,6 +1,7 @@
 package com.trialanderror.opmodes.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.trialanderror.robothandlers.Drivetrain;
@@ -34,7 +35,8 @@ import static com.trialanderror.fieldhandlers.JewelColors.BLUE_JEWEL;;
 import static com.trialanderror.fieldhandlers.PositionToWall.LEFT_SQUARE;
 import static com.trialanderror.fieldhandlers.PositionToWall.RIGHT_SQUARE;
 
-@Autonomous(name = "Auto: Main")
+@Disabled
+@Autonomous(name = "Auto: Practice Main")
 public class AutonomousMain extends OpMode {
 
 
