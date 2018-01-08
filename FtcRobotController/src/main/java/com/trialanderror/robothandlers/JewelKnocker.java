@@ -6,22 +6,42 @@ import com.qualcomm.robotcore.hardware.ServoController;
 
 public class JewelKnocker {
 
+    private Servo jewelDropper;
     private Servo jewelKnocker;
 
-    private static final double UP_POSITION = 0.098;
-    private static final double DOWN_POSITION = 0.403;
+    private static final double UP_POSITION = 0.2157;
+    private static final double DOWN_POSITION = 0.55;
+
+
+    private static final double MID_POSITION = .32157;
+    private static final double LEFT_POSITION = .07843;
+    private static final double RIGHT_POSITION = .56471;
+
 
     public JewelKnocker(HardwareMap aHardwareMap){
+
+        jewelDropper = aHardwareMap.servo.get("dropper");
         jewelKnocker = aHardwareMap.servo.get("knocker");
+
         initServoPos();
     }
     public void initServoPos() {
-        jewelKnocker.setPosition(UP_POSITION);
+        jewelDropper.setPosition(UP_POSITION);
+        jewelKnocker.setPosition(MID_POSITION);
     }
     public void changeGoDown() {
-        jewelKnocker.setPosition(DOWN_POSITION);
+        jewelDropper.setPosition(DOWN_POSITION);
     }
     public void changeGoUp() {
-        jewelKnocker.setPosition(UP_POSITION);
+        jewelDropper.setPosition(UP_POSITION);
+    }
+    public void hitLeft(){
+        jewelKnocker.setPosition(LEFT_POSITION);
+    }
+    public void hitRight() {
+        jewelKnocker.setPosition(RIGHT_POSITION);
+    }
+    public void resetPos() {
+        jewelKnocker.setPosition(MID_POSITION);
     }
 }

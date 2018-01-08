@@ -27,7 +27,7 @@ public class TeleOpMain extends OpMode {
     private static final double DELTA_SERVO = 0.004;
     private static final double TURNING_SCALAR = 0.875; //Originally .875
     private static final double SLOW_DRIVE_SCALAR = .2;
-    private static final double SLOW_DRIVE_TURNING_SCALAR = 2.8;
+    private static final double SLOW_DRIVE_TURNING_SCALAR = 4.0;
     private static final double MIN_POWER_REG = 0.44;
     private static final double MIN_POWER_SLOW = 0.18;
 
