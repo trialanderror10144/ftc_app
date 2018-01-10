@@ -1,4 +1,5 @@
 package com.trialanderror.opmodes.autonomous;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -7,22 +8,18 @@ import com.trialanderror.robothandlers.GlyphLift;
 import com.trialanderror.robothandlers.JewelKnocker;
 import com.trialanderror.robothandlers.RelicGrabber;
 import com.trialanderror.robothandlers.VuforiaCameraRegister;
-
 import com.trialanderror.sensorhandlers.GyroTurnSensor;
 import com.trialanderror.sensorhandlers.JewelColorSensor;
 import com.trialanderror.sensorhandlers.PanelRangeSensor;
-
 import com.trialanderror.viewhandlers.NumberCategory;
 import com.trialanderror.viewhandlers.OptionMenu;
 import com.trialanderror.viewhandlers.SingleSelectCategory;
-
 import com.trialanderror.fieldhandlers.Alliances;
 import com.trialanderror.fieldhandlers.PositionToWall;
 import com.trialanderror.fieldhandlers.CryptoKeys;
 
 import static com.trialanderror.fieldhandlers.Alliances.BLUE_ALLIANCE;
 import static com.trialanderror.fieldhandlers.Alliances.RED_ALLIANCE;
-
 import static com.trialanderror.fieldhandlers.CryptoKeys.CENTER;
 import static com.trialanderror.fieldhandlers.CryptoKeys.LEFT;
 import static com.trialanderror.fieldhandlers.CryptoKeys.RIGHT;
@@ -31,32 +28,25 @@ import static com.trialanderror.fieldhandlers.JewelColors.RED_JEWEL;
 import static com.trialanderror.fieldhandlers.JewelColors.BLUE_JEWEL;;
 import static com.trialanderror.fieldhandlers.PositionToWall.LEFT_SQUARE;
 import static com.trialanderror.fieldhandlers.PositionToWall.RIGHT_SQUARE;
-
 @Autonomous(name = "Auto: Main")
 public class AutonomousSecondMain extends OpMode {
 
     //Creates dropdown menu for Robot Controller
     private OptionMenu autonomousParamsMenu;
 
-    //Defines DCMotor Parts
     private GlyphLift glyphLift;
     private Drivetrain drivetrain;
     private RelicGrabber relicGrabber;
-
-    //Defines Servos
     private JewelKnocker jewelKnocker;
-
-    //Defines all Sensors, Addons, and Encoders (if needed)
     private VuforiaCameraRegister camera;
     private JewelColorSensor jCSensor;
     private PanelRangeSensor backUltra;
     private PanelRangeSensor frontUltra;
     private GyroTurnSensor gyroSensor;
-
-    //Defines Enumeration
     private Alliances allianceColor;
     private PositionToWall position;
-    public CryptoKeys keyPosition;
+    private int jewelOption;
+
 
     //Main Variables for Switch Statements and Runtime
     private int delayTime;
@@ -67,15 +57,13 @@ public class AutonomousSecondMain extends OpMode {
     private double lastReadRuntime;
     private int lastReadRunState;
 
-    private int jewelOption;
 
     //List of Values for Optical Distance Sensor (Ultrasonic)
 
-    //100
-    public final static double RED_LEFTS_LEFT = 79.0;
-    public final static double RED_LEFTS_CENTER = 98.0;
-    public final static double RED_LEFTS_RIGHT = 117.0;
-
+    //100 Use Back/Top Sensor
+    public final static double RED_LEFTS_LEFT = 92.0;
+    public final static double RED_LEFTS_CENTER = 111.0;
+    public final static double RED_LEFTS_RIGHT = 130.0;
 
 
     //200
@@ -108,6 +96,7 @@ public class AutonomousSecondMain extends OpMode {
         glyphLift = new GlyphLift((hardwareMap));
         jewelKnocker = new JewelKnocker((hardwareMap));
         drivetrain = new Drivetrain((hardwareMap));
+        drivetrain.setBreakModeAuto();
         jCSensor = new JewelColorSensor(hardwareMap.colorSensor.get("csensor"), 0x3c);
         frontUltra = new PanelRangeSensor((hardwareMap.i2cDevice.get("rsensorback")), 0x28);
         backUltra = new PanelRangeSensor((hardwareMap.i2cDevice.get("rsensorfront")), 0x10);
@@ -137,7 +126,7 @@ public class AutonomousSecondMain extends OpMode {
             case 0:
                 gyroSensor.resetGyro();
                 glyphLift.closeAuto();
-                drivetrain.stop();
+                drivetrain.resetEncoders();
                 if (getStateRuntime() > .75) { stateCurrent++;}
                 break;
 
@@ -150,7 +139,6 @@ public class AutonomousSecondMain extends OpMode {
                 if (allianceColor == RED_ALLIANCE && position == RIGHT_SQUARE) {
                     stateCurrent = 200;
                 }
-
                 if (allianceColor == BLUE_ALLIANCE && position == LEFT_SQUARE) {
                     stateCurrent = 300;
                 }
@@ -183,24 +171,28 @@ public class AutonomousSecondMain extends OpMode {
                 break;
 
 
+
             //Red, Left Square, Left or Unknown
             case 110:
-                jewelKnocker.changeGoDown();
                 if (getStateRuntime() > 0.2) {
                     glyphLift.stop();
                 }
                 else {
                     glyphLift.raiseLiftPowerUp();
                 }
-                if (getStateRuntime() > 0.9) stateCurrent++;
+                if (getStateRuntime() > 1) stateCurrent++;
                 break;
 
             case 111:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 2.05) stateCurrent++;
+                jewelKnocker.changeGoDown();
+                if (getStateRuntime() > .9) stateCurrent++;
                 break;
 
             case 112:
+                jCSensor.getJewelColor();
+                if (getStateRuntime() > .8) stateCurrent++;
+
+            case 113:
                 CompareAllianceJewel();
                 if (jewelOption == 1) {
                     jewelKnocker.hitLeft();
@@ -215,7 +207,7 @@ public class AutonomousSecondMain extends OpMode {
                 }
                 break;
 
-            case 113:
+            case 114:
                 jewelKnocker.resetPos();
                 if (getStateRuntime() > .5) {
                    jewelKnocker.changeGoUp();
@@ -226,72 +218,78 @@ public class AutonomousSecondMain extends OpMode {
                 break;
 
 
-            case 114:
-                backUltra.getUltrasonicReading();
-                if (getStateRuntime() > .5) {
+            case 115:
+                drivetrain.setPowerWithoutAcceleration(.08,.08);
+                if (drivetrain.getEncodersMagnitude() > 610) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
                     stateCurrent++;
                 }
                 break;
 
 
-            case 115:
-                drivetrain.setPowerWithoutAcceleration(.1,.1);
+            case 116:
+                drivetrain.setPowerWithoutAcceleration(.08,.08);
                 if (backUltra.getUltrasonicReading() >= RED_LEFTS_LEFT) {
                     drivetrain.setPowerWithoutAcceleration(0, 0);
                     gyroSensor.resetGyro();
-                    stateCurrent++;
+                    stateCurrent = 500;
                 }
                 break;
 
-            case 116:
+            case 117:
                 drivetrain.setPowerWithoutAcceleration(.38,-.38);
                 if (gyroSensor.headingGyro() >= 73) {
                     stateCurrent++;
                 }
                 break;
 
-            case 117:
+            case 118:
                 drivetrain.setPowerWithoutAcceleration(0,0);
                 stateCurrent++;
                 break;
 
-            case 118:
+            case 119:
                 drivetrain.setPowerWithoutAcceleration(.1,.1);
                 if (getStateRuntime() > 1.5) {
                     stateCurrent++;
                 }
                 break;
 
-            case 119:
+            case 120:
                 glyphLift.midAuto();
                 drivetrain.setPowerWithoutAcceleration(-.16, -.16);
                 if (getStateRuntime() > .15) { stateCurrent++; }
                 break;
 
-            case 120:
+            case 121:
                 drivetrain.setPowerWithoutAcceleration(0,0);
                 break;
 
 
 
+
+
             //Red, Left Square, Center
             case 130:
-                jewelKnocker.changeGoDown();
                 if (getStateRuntime() > 0.2) {
                     glyphLift.stop();
                 }
                 else {
                     glyphLift.raiseLiftPowerUp();
                 }
-                if (getStateRuntime() > 0.9) stateCurrent++;
+                if (getStateRuntime() > 1) stateCurrent++;
                 break;
 
             case 131:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 2.05) stateCurrent++;
+                jewelKnocker.changeGoDown();
+                if (getStateRuntime() > .9) stateCurrent++;
                 break;
 
             case 132:
+                jCSensor.getJewelColor();
+                if (getStateRuntime() > .8) stateCurrent++;
+
+            case 133:
                 CompareAllianceJewel();
                 if (jewelOption == 1) {
                     jewelKnocker.hitLeft();
@@ -306,7 +304,7 @@ public class AutonomousSecondMain extends OpMode {
                 }
                 break;
 
-            case 133:
+            case 134:
                 jewelKnocker.resetPos();
                 if (getStateRuntime() > .5) {
                     jewelKnocker.changeGoUp();
@@ -316,14 +314,6 @@ public class AutonomousSecondMain extends OpMode {
                 }
                 break;
 
-            case 134:
-                drivetrain.setPowerWithoutAcceleration(.3,.3);
-                if (getStateRuntime() > .39) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    drivetrain.stop();
-                    stateCurrent++;
-                }
-                break;
 
             case 135:
                 backUltra.getUltrasonicReading();
@@ -334,7 +324,7 @@ public class AutonomousSecondMain extends OpMode {
 
 
             case 136:
-                drivetrain.setPowerWithoutAcceleration(.2,.2);
+                drivetrain.setPowerWithoutAcceleration(.1,.1);
                 if (backUltra.getUltrasonicReading() >= RED_LEFTS_CENTER) {
                     drivetrain.setPowerWithoutAcceleration(0, 0);
                     gyroSensor.resetGyro();
@@ -343,10 +333,11 @@ public class AutonomousSecondMain extends OpMode {
                 break;
 
             case 137:
-                drivetrain.setPowerWithoutAcceleration(.35,-.35);
+                drivetrain.setPowerWithoutAcceleration(.38,-.38);
                 if (gyroSensor.headingGyro() >= 73) {
                     stateCurrent++;
                 }
+                break;
 
             case 138:
                 drivetrain.setPowerWithoutAcceleration(0,0);
@@ -374,24 +365,28 @@ public class AutonomousSecondMain extends OpMode {
 
 
 
+
             //Red, Left Square, Right
             case 150:
-                jewelKnocker.changeGoDown();
                 if (getStateRuntime() > 0.2) {
                     glyphLift.stop();
                 }
                 else {
                     glyphLift.raiseLiftPowerUp();
                 }
-                if (getStateRuntime() > 0.9) stateCurrent++;
+                if (getStateRuntime() > 1) stateCurrent++;
                 break;
 
             case 151:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 2.05) stateCurrent++;
+                jewelKnocker.changeGoDown();
+                if (getStateRuntime() > .9) stateCurrent++;
                 break;
 
             case 152:
+                jCSensor.getJewelColor();
+                if (getStateRuntime() > .8) stateCurrent++;
+
+            case 153:
                 CompareAllianceJewel();
                 if (jewelOption == 1) {
                     jewelKnocker.hitLeft();
@@ -406,7 +401,7 @@ public class AutonomousSecondMain extends OpMode {
                 }
                 break;
 
-            case 153:
+            case 154:
                 jewelKnocker.resetPos();
                 if (getStateRuntime() > .5) {
                     jewelKnocker.changeGoUp();
@@ -416,14 +411,6 @@ public class AutonomousSecondMain extends OpMode {
                 }
                 break;
 
-            case 154:
-                drivetrain.setPowerWithoutAcceleration(.3,.3);
-                if (getStateRuntime() > .39) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    drivetrain.stop();
-                    stateCurrent++;
-                }
-                break;
 
             case 155:
                 backUltra.getUltrasonicReading();
@@ -434,7 +421,7 @@ public class AutonomousSecondMain extends OpMode {
 
 
             case 156:
-                drivetrain.setPowerWithoutAcceleration(.2,.2);
+                drivetrain.setPowerWithoutAcceleration(.1,.1);
                 if (backUltra.getUltrasonicReading() >= RED_LEFTS_RIGHT) {
                     drivetrain.setPowerWithoutAcceleration(0, 0);
                     gyroSensor.resetGyro();
@@ -443,7 +430,7 @@ public class AutonomousSecondMain extends OpMode {
                 break;
 
             case 157:
-                drivetrain.setPowerWithoutAcceleration(.35,-.35);
+                drivetrain.setPowerWithoutAcceleration(.38,-.38);
                 if (gyroSensor.headingGyro() >= 73) {
                     stateCurrent++;
                 }
@@ -474,6 +461,9 @@ public class AutonomousSecondMain extends OpMode {
 
 
 
+
+
+
             case 200:
                 jewelKnocker.changeGoDown();
                 if (getStateRuntime() > 0.2) {
@@ -493,50 +483,35 @@ public class AutonomousSecondMain extends OpMode {
             case 202:
                 CompareAllianceJewel();
                 if (jewelOption == 1) {
-                    drivetrain.setPowerWithoutAcceleration(-.2, -.2);
+                    jewelKnocker.hitLeft();
+                    stateCurrent++;
                 }
-                if (jewelOption == 3) {
-                    drivetrain.setPowerWithoutAcceleration(.2, .2);
+                else if (jewelOption == 3) {
+                    jewelKnocker.hitRight();
+                    stateCurrent++;
                 }
-                if (getStateRuntime() > .2) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    drivetrain.stop();
+                else {
                     stateCurrent++;
                 }
                 break;
 
             case 203:
-                jewelKnocker.changeGoUp();
+                jewelKnocker.resetPos();
                 if (getStateRuntime() > .5) {
+                    jewelKnocker.changeGoUp();
+                }
+                if (getStateRuntime() > 1) {
                     stateCurrent++;
                 }
                 break;
 
             case 204:
-                if (jewelOption == 1) {
-                    drivetrain.setPowerWithoutAcceleration(.81, .81);
-                    if (getStateRuntime() > 2.2) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
-                }
-                if (jewelOption == 3) {
-                    drivetrain.setPowerWithoutAcceleration(.3,.3);
-                    if (getStateRuntime() > .32) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
-                }
-                else {
                     drivetrain.setPowerWithoutAcceleration(.3,.3);
                     if (getStateRuntime() > .39) {
                         drivetrain.setPowerWithoutAcceleration(0, 0);
                         drivetrain.stop();
                         stateCurrent++;
                     }
-                }
                 break;
 
             case 205:
@@ -546,6 +521,8 @@ public class AutonomousSecondMain extends OpMode {
                         stateCurrent++;
                     }
                 break;
+
+
 
 
 
@@ -568,50 +545,35 @@ public class AutonomousSecondMain extends OpMode {
             case 302:
                 CompareAllianceJewel();
                 if (jewelOption == 2) {
-                    drivetrain.setPowerWithoutAcceleration(.2, .2);
+                    jewelKnocker.hitRight();
+                    stateCurrent++;
                 }
-                if (jewelOption == 4) {
-                    drivetrain.setPowerWithoutAcceleration(-.2, -.2);
+                else if (jewelOption == 4) {
+                    jewelKnocker.hitLeft();
+                    stateCurrent++;
                 }
-                if (getStateRuntime() > .2) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    drivetrain.stop();
+                else {
                     stateCurrent++;
                 }
                 break;
 
             case 303:
-                jewelKnocker.changeGoUp();
+                jewelKnocker.resetPos();
                 if (getStateRuntime() > .5) {
+                    jewelKnocker.changeGoUp();
+                }
+                if (getStateRuntime() > 1) {
                     stateCurrent++;
                 }
                 break;
 
             case 304:
-                if (jewelOption == 2) {
-                    drivetrain.setPowerWithoutAcceleration(-.81, -.81);
-                    if (getStateRuntime() > 2.2) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
-                }
-                if (jewelOption == 4) {
-                    drivetrain.setPowerWithoutAcceleration(-.3,-.3);
-                    if (getStateRuntime() > .32) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
-                }
-                else {
                     drivetrain.setPowerWithoutAcceleration(-.3,-.3);
                     if (getStateRuntime() > .39) {
                         drivetrain.setPowerWithoutAcceleration(0, 0);
                         drivetrain.stop();
                         stateCurrent++;
                     }
-                }
                 break;
 
             case 305:
@@ -1779,6 +1741,7 @@ public class AutonomousSecondMain extends OpMode {
         telemetry.addData("Front Range (CM):", frontUltra.getUltrasonicReading());
         telemetry.addData("Back Range (CM):", backUltra.getUltrasonicReading());
         telemetry.addData("Gyro Heading:", gyroSensor.headingGyro());
+        telemetry.addData("Encoder Distance:", drivetrain.getEncodersMagnitude());
     }
     @Override
     public void stop() {
@@ -1787,7 +1750,6 @@ public class AutonomousSecondMain extends OpMode {
         relicGrabber.noHorizMove();
         jewelKnocker.initServoPos();
     }
-
     private double getStateRuntime() {
         if(lastReadRunState != stateCurrent) {
             lastReadRuntime = runtime.seconds();
@@ -1816,7 +1778,6 @@ public class AutonomousSecondMain extends OpMode {
         } */
 
     }
-
     public void CompareAllianceJewel() {
         if (jCSensor.getJewelColor() == RED_JEWEL && allianceColor == RED_ALLIANCE) {
             jewelOption = 1;
@@ -1830,7 +1791,6 @@ public class AutonomousSecondMain extends OpMode {
         if (jCSensor.getJewelColor() == BLUE_JEWEL && allianceColor == BLUE_ALLIANCE) {
             jewelOption = 4;
         }
-
     }
     public CryptoKeys readCamera() {
         return camera.getCryptoKey();

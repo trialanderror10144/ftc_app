@@ -9,14 +9,13 @@ public class JewelKnocker {
     private Servo jewelDropper;
     private Servo jewelKnocker;
 
-    private static final double UP_POSITION = 0.2157;
+    private static final double UP_POSITION = 0.217;
+    private static final double MID_POS = .385;
     private static final double DOWN_POSITION = 0.55;
-
 
     private static final double MID_POSITION = .32157;
     private static final double LEFT_POSITION = .07843;
     private static final double RIGHT_POSITION = .56471;
-
 
     public JewelKnocker(HardwareMap aHardwareMap){
 
@@ -34,6 +33,8 @@ public class JewelKnocker {
     }
     public void changeGoUp() {
         jewelDropper.setPosition(UP_POSITION);
+    }
+    public void midTest() { jewelDropper.setPosition(MID_POS);
     }
     public void hitLeft(){
         jewelKnocker.setPosition(LEFT_POSITION);

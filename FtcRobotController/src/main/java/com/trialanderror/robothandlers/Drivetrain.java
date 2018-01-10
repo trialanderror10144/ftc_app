@@ -31,7 +31,6 @@ public class Drivetrain {
     private DcMotorController wheelControllerLeft;
     private DcMotorController wheelControllerRight;
 
-
     private AccelerationMotor leftFront;
     private AccelerationMotor leftBack;
     private AccelerationMotor rightFront;
@@ -44,6 +43,8 @@ public class Drivetrain {
         rightFront = new AccelerationMotor(aHardwareMap.dcMotor.get("rightFront"), WHEEL_ACCEL_SPEED_PER_SECOND_STRAIGHT, WHEEL_DECEL_SPEED_PER_SECOND_STRAIGHT, WHEEL_MINIMUM_POWER, WHEEL_MAXIMUM_POWER);
         rightBack = new AccelerationMotor(aHardwareMap.dcMotor.get("rightBack"), WHEEL_ACCEL_SPEED_PER_SECOND_STRAIGHT, WHEEL_DECEL_SPEED_PER_SECOND_STRAIGHT, WHEEL_MINIMUM_POWER, WHEEL_MAXIMUM_POWER);
 
+        wheelControllerLeft = aHardwareMap.dcMotorController.get("Front Motors");
+        wheelControllerRight = aHardwareMap.dcMotorController.get("Back Motors");
         rightFront.setDirection(REVERSE);
         rightBack.setDirection(REVERSE);
     //    runWithoutEncoderPid();
@@ -65,7 +66,6 @@ public class Drivetrain {
         rightFront.stopMotorHard();
         rightBack.stopMotorHard();
     }
-
     public int getEncoderLeft() {
         return wheelControllerLeft.getMotorCurrentPosition(ENCODER_PORT_1) - virtualEncoderZeroLeft;
     }
@@ -86,8 +86,18 @@ public class Drivetrain {
         return (Math.abs(getEncoderLeft()) + Math.abs(getEncoderRight())) / 2;
     }
 
-    public double getPidTurningBasePower() {
-        return measuredPidTurningBasePower;
+    public void setBreakModeAuto() {
+        leftFront.autoBreakMode();
+        leftBack.autoBreakMode();
+        rightFront.autoBreakMode();
+        rightBack.autoBreakMode();
+    }
+
+    public void setBreakModeTele() {
+        leftFront.teleBreakMode();
+        leftBack.teleBreakMode();
+        rightFront.teleBreakMode();
+        rightBack.teleBreakMode();
     }
 
     public boolean isDriveEncodersPast(int aDistance) {
@@ -134,7 +144,7 @@ public class Drivetrain {
         wheelControllerRight.setMotorMode(ENCODER_PORT_1, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    public void runWithoutEncoderPid() {
+    public void runWithoutEncoder() {
         wheelControllerLeft.setMotorMode(ENCODER_PORT_1, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wheelControllerLeft.setMotorMode(ENCODER_PORT_2, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wheelControllerRight.setMotorMode(ENCODER_PORT_1, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -158,43 +168,11 @@ public class Drivetrain {
         rightBack.setDirectPower(aRightPower);
     }
 
-    public void setPowerWithPidDeadbandCorrection(double aLeftPower, double aRightPower) {
-        if(aLeftPower > 0) {
-            leftFront.setDirectPower(aLeftPower + measuredPidTurningBasePower);
-            leftBack.setDirectPower(aLeftPower + measuredPidTurningBasePower);
-        }
-        else if(aLeftPower < 0) {
-            leftFront.setDirectPower(aLeftPower - measuredPidTurningBasePower);
-            leftBack.setDirectPower(aLeftPower - measuredPidTurningBasePower);
-        }
-        else {
-            leftFront.setDirectPower(0);
-            leftBack.setDirectPower(0);
-        }
-
-        if(aRightPower > 0) {
-            rightFront.setDirectPower(aRightPower + measuredPidTurningBasePower);
-            rightBack.setDirectPower(aRightPower + measuredPidTurningBasePower);
-        }
-        else if(aRightPower < 0) {
-            rightFront.setDirectPower(aRightPower - measuredPidTurningBasePower);
-            rightBack.setDirectPower(aRightPower - measuredPidTurningBasePower);
-        }
-        else {
-            rightFront.setDirectPower(0);
-            rightBack.setDirectPower(0);
-        }
-    }
-
     private void setAccelerationRate(double anAcceleration, double aDeceleration){
         leftFront.setAccelerationRates(anAcceleration, aDeceleration);
         leftBack.setAccelerationRates(anAcceleration, aDeceleration);
         rightFront.setAccelerationRates(anAcceleration, aDeceleration);
         rightBack.setAccelerationRates(anAcceleration, aDeceleration);
-    }
-
-    public void setMeasuredPidTurningBasePower(double aTurningBasePower) {
-        measuredPidTurningBasePower = aTurningBasePower;
     }
 
     public void setMinimumMotorPower(double aMinimumPower) {

@@ -35,6 +35,7 @@ public class TeleOpMain extends OpMode {
     public void init() {
 
         drivetrain = new Drivetrain((hardwareMap));
+        drivetrain.setBreakModeTele();
         jewelKnocker = new JewelKnocker((hardwareMap));
         glyphLift = new GlyphLift((hardwareMap));
         relicGrabber = new RelicGrabber((hardwareMap));

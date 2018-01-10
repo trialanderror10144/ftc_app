@@ -24,6 +24,5 @@ public class PanelRangeSensor {
         sensorCache = sensorReader.read(0x04, 1);
         if((sensorCache[0] & 0xFF) != 255 && (sensorCache[0] & 0xFF) != 0) lastReadDistance = sensorCache[0] & 0xFF;
         return lastReadDistance;
-
     }
 }
