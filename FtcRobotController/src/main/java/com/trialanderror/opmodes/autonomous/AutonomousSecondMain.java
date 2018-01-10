@@ -61,9 +61,9 @@ public class AutonomousSecondMain extends OpMode {
     //List of Values for Optical Distance Sensor (Ultrasonic)
 
     //100 Use Back/Top Sensor
-    public final static double RED_LEFTS_LEFT = 92.0;
-    public final static double RED_LEFTS_CENTER = 111.0;
-    public final static double RED_LEFTS_RIGHT = 130.0;
+    public final static double RED_LEFTS_LEFT = 91.0;
+    public final static double RED_LEFTS_CENTER = 103.0;
+    public final static double RED_LEFTS_RIGHT = 118.0;
 
 
     //200
@@ -79,12 +79,16 @@ public class AutonomousSecondMain extends OpMode {
 
     //For 200 and 300
     public static final double TURN_DISTANCE = 37.0;
+
     //The opposite of the Red Left Distances, since its flipped ????? NOT TRUE
 
     //400
     public final static double BLUE_RIGHTS_LEFT = 138.0; //Goes to Center
     public final static double BLUE_RIGHTS_CENTER = 119.0; // G
     public final static double BLUE_RIGHTS_RIGHT = 100.0;
+
+    public final static double PROPORTIONAL_GYRO_SCALAR = 0.0025;
+    private double driveGyroCorrection;
 
     public void init() {
         try {
@@ -152,7 +156,6 @@ public class AutonomousSecondMain extends OpMode {
             //100, 200, and 300 all use the backUltra Sensor, 400 uses frontUltra
 
 
-
             case 100:
                 readCamera();
                 if (getStateRuntime() > 2.5) {stateCurrent++;}
@@ -191,6 +194,7 @@ public class AutonomousSecondMain extends OpMode {
             case 112:
                 jCSensor.getJewelColor();
                 if (getStateRuntime() > .8) stateCurrent++;
+                break;
 
             case 113:
                 CompareAllianceJewel();
@@ -210,29 +214,30 @@ public class AutonomousSecondMain extends OpMode {
             case 114:
                 jewelKnocker.resetPos();
                 if (getStateRuntime() > .5) {
-                   jewelKnocker.changeGoUp();
+                    jewelKnocker.changeGoUp();
                 }
                 if (getStateRuntime() > 1) {
                     stateCurrent++;
                 }
                 break;
 
-
             case 115:
-                drivetrain.setPowerWithoutAcceleration(.08,.08);
-                if (drivetrain.getEncodersMagnitude() > 610) {
+                if (drivetrain.getEncodersMagnitude() >= 610) {
                     drivetrain.setPowerWithoutAcceleration(0,0);
                     stateCurrent++;
+                } else {
+                    drivetrain.setPowerWithoutAcceleration(.08,.08);
                 }
                 break;
 
-
             case 116:
-                drivetrain.setPowerWithoutAcceleration(.08,.08);
                 if (backUltra.getUltrasonicReading() >= RED_LEFTS_LEFT) {
                     drivetrain.setPowerWithoutAcceleration(0, 0);
                     gyroSensor.resetGyro();
-                    stateCurrent = 500;
+                    stateCurrent++;
+                } else {
+                    driveGyroCorrection = PROPORTIONAL_GYRO_SCALAR*gyroSensor.headingGyro();
+                    drivetrain.setPowerWithoutAcceleration(.08 - driveGyroCorrection,.08 + driveGyroCorrection);
                 }
                 break;
 
@@ -258,13 +263,27 @@ public class AutonomousSecondMain extends OpMode {
             case 120:
                 glyphLift.midAuto();
                 drivetrain.setPowerWithoutAcceleration(-.16, -.16);
-                if (getStateRuntime() > .15) { stateCurrent++; }
+                if (getStateRuntime() > .15) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
                 break;
 
             case 121:
-                drivetrain.setPowerWithoutAcceleration(0,0);
+                drivetrain.setPowerWithoutAcceleration(.15,.15);
+                if (getStateRuntime() > 1.2) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
                 break;
 
+            case 122:
+                drivetrain.setPowerWithoutAcceleration(-.16,-.16);
+                if (getStateRuntime() > .15) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
+                break;
 
 
 
@@ -288,6 +307,7 @@ public class AutonomousSecondMain extends OpMode {
             case 132:
                 jCSensor.getJewelColor();
                 if (getStateRuntime() > .8) stateCurrent++;
+                break;
 
             case 133:
                 CompareAllianceJewel();
@@ -314,21 +334,23 @@ public class AutonomousSecondMain extends OpMode {
                 }
                 break;
 
-
             case 135:
-                backUltra.getUltrasonicReading();
-                if (getStateRuntime() > .5) {
+                if (drivetrain.getEncodersMagnitude() >= 610) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
                     stateCurrent++;
+                } else {
+                    drivetrain.setPowerWithoutAcceleration(.08,.08);
                 }
                 break;
 
-
             case 136:
-                drivetrain.setPowerWithoutAcceleration(.1,.1);
                 if (backUltra.getUltrasonicReading() >= RED_LEFTS_CENTER) {
                     drivetrain.setPowerWithoutAcceleration(0, 0);
                     gyroSensor.resetGyro();
                     stateCurrent++;
+                } else {
+                    driveGyroCorrection = PROPORTIONAL_GYRO_SCALAR*gyroSensor.headingGyro();
+                    drivetrain.setPowerWithoutAcceleration(.08 - driveGyroCorrection,.08 + driveGyroCorrection);
                 }
                 break;
 
@@ -354,28 +376,40 @@ public class AutonomousSecondMain extends OpMode {
             case 140:
                 glyphLift.midAuto();
                 drivetrain.setPowerWithoutAcceleration(-.16, -.16);
-                if (getStateRuntime() > .15) { stateCurrent++; }
+                if (getStateRuntime() > .15) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
                 break;
 
             case 141:
-                drivetrain.setPowerWithoutAcceleration(0,0);
+                drivetrain.setPowerWithoutAcceleration(.15,.15);
+                if (getStateRuntime() > 1.2) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
                 break;
 
-
-
+            case 142:
+                drivetrain.setPowerWithoutAcceleration(-.16,-.16);
+                if (getStateRuntime() > .15) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
+                break;
 
 
 
             //Red, Left Square, Right
             case 150:
-                if (getStateRuntime() > 0.2) {
-                    glyphLift.stop();
-                }
-                else {
-                    glyphLift.raiseLiftPowerUp();
-                }
-                if (getStateRuntime() > 1) stateCurrent++;
-                break;
+            if (getStateRuntime() > 0.2) {
+                glyphLift.stop();
+            }
+            else {
+                glyphLift.raiseLiftPowerUp();
+            }
+            if (getStateRuntime() > 1) stateCurrent++;
+            break;
 
             case 151:
                 jewelKnocker.changeGoDown();
@@ -385,6 +419,7 @@ public class AutonomousSecondMain extends OpMode {
             case 152:
                 jCSensor.getJewelColor();
                 if (getStateRuntime() > .8) stateCurrent++;
+                break;
 
             case 153:
                 CompareAllianceJewel();
@@ -411,21 +446,23 @@ public class AutonomousSecondMain extends OpMode {
                 }
                 break;
 
-
             case 155:
-                backUltra.getUltrasonicReading();
-                if (getStateRuntime() > .5) {
+                if (drivetrain.getEncodersMagnitude() >= 610) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
                     stateCurrent++;
+                } else {
+                    drivetrain.setPowerWithoutAcceleration(.08,.08);
                 }
                 break;
 
-
             case 156:
-                drivetrain.setPowerWithoutAcceleration(.1,.1);
                 if (backUltra.getUltrasonicReading() >= RED_LEFTS_RIGHT) {
                     drivetrain.setPowerWithoutAcceleration(0, 0);
                     gyroSensor.resetGyro();
                     stateCurrent++;
+                } else {
+                    driveGyroCorrection = PROPORTIONAL_GYRO_SCALAR*gyroSensor.headingGyro();
+                    drivetrain.setPowerWithoutAcceleration(.08 - driveGyroCorrection,.08 + driveGyroCorrection);
                 }
                 break;
 
@@ -451,13 +488,27 @@ public class AutonomousSecondMain extends OpMode {
             case 160:
                 glyphLift.midAuto();
                 drivetrain.setPowerWithoutAcceleration(-.16, -.16);
-                if (getStateRuntime() > .15) { stateCurrent++; }
+                if (getStateRuntime() > .15) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
                 break;
 
             case 161:
-                drivetrain.setPowerWithoutAcceleration(0,0);
+                drivetrain.setPowerWithoutAcceleration(.15,.15);
+                if (getStateRuntime() > 1.2) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
                 break;
 
+            case 162:
+                drivetrain.setPowerWithoutAcceleration(-.16,-.16);
+                if (getStateRuntime() > .15) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
+                break;
 
 
 
@@ -576,672 +627,7 @@ public class AutonomousSecondMain extends OpMode {
 
 
 
-                /*
-//RED ALLIANCE RIGHT POSITION
-            case 200:
-                readCamera();
-                if (getStateRuntime() > 2.5) {stateCurrent++;}
-                break;
 
-            case 201:
-                if (readCamera() == LEFT || readCamera() == UNKNOWN) {
-                    stateCurrent = 210;
-                }
-                if (readCamera() == CENTER) {
-                    stateCurrent = 230;
-                }
-                if (readCamera() == RIGHT) {
-                    stateCurrent = 250;
-                }
-                break;
-
-
-
-            case 210:
-                jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 0.2) {
-                    glyphLift.stop();
-                }
-                else {
-                    glyphLift.raiseLiftPowerUp();
-                }
-                if (getStateRuntime() > 0.9) stateCurrent++;
-                break;
-
-            case 211:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 2.05) stateCurrent++;
-                break;
-
-            case 212:
-                CompareAllianceJewel();
-                if (jewelOption == 1) {
-                    drivetrain.setPowerWithoutAcceleration(-.2, -.2);
-                }
-                if (jewelOption == 3) {
-                    drivetrain.setPowerWithoutAcceleration(.2, .2);
-                }
-                if (getStateRuntime() > .2) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    drivetrain.stop();
-                    stateCurrent++;
-                }
-                break;
-
-            case 213:
-                jewelKnocker.changeGoUp();
-                if (getStateRuntime() > .5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 214:
-                frontUltra.getUltrasonicReading();
-                drivetrain.setPowerWithoutAcceleration(.8,.8);
-                if (frontUltra.getUltrasonicReading() <= TURN_DISTANCE) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
-                    stateCurrent++;
-                }
-                break;
-
-            case 215:
-                gyroSensor.resetGyro();
-                backUltra.getUltrasonicReading();
-                if (getStateRuntime() > .5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 216:
-                drivetrain.setPowerWithoutAcceleration(-.5,.5);
-                if (gyroSensor.headingGyro() <= -77) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
-                    stateCurrent++;
-                }
-                break;
-
-            case 217:
-                drivetrain.setPowerWithoutAcceleration(.1,.1);
-                if (backUltra.getUltrasonicReading() >= RED_RIGHTS_LEFT) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    gyroSensor.resetGyro();
-                    stateCurrent++;
-                }
-                break;
-
-            case 218:
-                drivetrain.setPowerWithoutAcceleration(.5,-.5);
-                if (gyroSensor.headingGyro() >= 77) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 219:
-                drivetrain.setPowerWithoutAcceleration(0,0);
-                stateCurrent++;
-                break;
-
-            case 220:
-                drivetrain.setPowerWithoutAcceleration(.1,.1);
-                if (getStateRuntime() > 1.5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 221:
-                glyphLift.midAuto();
-                drivetrain.setPowerWithoutAcceleration(-.16, -.16);
-                if (getStateRuntime() > .15) { stateCurrent++; }
-                break;
-
-            case 222:
-                drivetrain.setPowerWithoutAcceleration(0,0);
-                break;
-
-
-
-
-
-
-
-            case 230:
-                jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 0.2) {
-                    glyphLift.stop();
-                }
-                else {
-                    glyphLift.raiseLiftPowerUp();
-                }
-                if (getStateRuntime() > 0.9) stateCurrent++;
-                break;
-
-            case 231:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 2.05) stateCurrent++;
-                break;
-
-            case 232:
-                CompareAllianceJewel();
-                if (jewelOption == 1) {
-                    drivetrain.setPowerWithoutAcceleration(-.2, -.2);
-                }
-                if (jewelOption == 3) {
-                    drivetrain.setPowerWithoutAcceleration(.2, .2);
-                }
-                if (getStateRuntime() > .2) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    drivetrain.stop();
-                    stateCurrent++;
-                }
-                break;
-
-            case 233:
-                jewelKnocker.changeGoUp();
-                if (getStateRuntime() > .5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 234:
-                frontUltra.getUltrasonicReading();
-                drivetrain.setPowerWithoutAcceleration(.8,.8);
-                if (frontUltra.getUltrasonicReading() <= TURN_DISTANCE) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
-                    stateCurrent++;
-                }
-                break;
-
-            case 235:
-                gyroSensor.resetGyro();
-                backUltra.getUltrasonicReading();
-                if (getStateRuntime() > .5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 236:
-                drivetrain.setPowerWithoutAcceleration(-.5,.5);
-                if (gyroSensor.headingGyro() <= -77) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
-                    stateCurrent++;
-                }
-                break;
-
-            case 237:
-                drivetrain.setPowerWithoutAcceleration(.1,.1);
-                if (backUltra.getUltrasonicReading() >= RED_RIGHTS_CENTER) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    gyroSensor.resetGyro();
-                    stateCurrent++;
-                }
-                break;
-
-            case 238:
-                drivetrain.setPowerWithoutAcceleration(.5,-.5);
-                if (gyroSensor.headingGyro() >= 77) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 239:
-                drivetrain.setPowerWithoutAcceleration(0,0);
-                stateCurrent++;
-                break;
-
-            case 240:
-                drivetrain.setPowerWithoutAcceleration(.1,.1);
-                if (getStateRuntime() > 1.5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 241:
-                glyphLift.midAuto();
-                drivetrain.setPowerWithoutAcceleration(-.16, -.16);
-                if (getStateRuntime() > .15) { stateCurrent++; }
-                break;
-
-            case 242:
-                drivetrain.setPowerWithoutAcceleration(0,0);
-                break;
-
-
-
-
-
-
-            case 250:
-                jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 0.2) {
-                    glyphLift.stop();
-                }
-                else {
-                    glyphLift.raiseLiftPowerUp();
-                }
-                if (getStateRuntime() > 0.9) stateCurrent++;
-                break;
-
-            case 251:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 2.05) stateCurrent++;
-                break;
-
-            case 252:
-                CompareAllianceJewel();
-                if (jewelOption == 1) {
-                    drivetrain.setPowerWithoutAcceleration(-.2, -.2);
-                }
-                if (jewelOption == 3) {
-                    drivetrain.setPowerWithoutAcceleration(.2, .2);
-                }
-                if (getStateRuntime() > .2) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    drivetrain.stop();
-                    stateCurrent++;
-                }
-                break;
-
-            case 253:
-                jewelKnocker.changeGoUp();
-                if (getStateRuntime() > .5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 254:
-                frontUltra.getUltrasonicReading();
-                drivetrain.setPowerWithoutAcceleration(.8,.8);
-                if (frontUltra.getUltrasonicReading() <= TURN_DISTANCE) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
-                    stateCurrent++;
-                }
-                break;
-
-            case 255:
-                gyroSensor.resetGyro();
-                backUltra.getUltrasonicReading();
-                if (getStateRuntime() > .5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 256:
-                drivetrain.setPowerWithoutAcceleration(-.5,.5);
-                if (gyroSensor.headingGyro() <= -77) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
-                    stateCurrent++;
-                }
-                break;
-
-            case 257:
-                drivetrain.setPowerWithoutAcceleration(.1,.1);
-                if (backUltra.getUltrasonicReading() >= RED_RIGHTS_RIGHT) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    gyroSensor.resetGyro();
-                    stateCurrent++;
-                }
-                break;
-
-            case 258:
-                drivetrain.setPowerWithoutAcceleration(.5,-.5);
-                if (gyroSensor.headingGyro() >= 77) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 259:
-                drivetrain.setPowerWithoutAcceleration(0,0);
-                stateCurrent++;
-                break;
-
-            case 260:
-                drivetrain.setPowerWithoutAcceleration(.1,.1);
-                if (getStateRuntime() > 1.5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 261:
-                glyphLift.midAuto();
-                drivetrain.setPowerWithoutAcceleration(-.16, -.16);
-                if (getStateRuntime() > .15) { stateCurrent++; }
-                break;
-
-            case 262:
-                drivetrain.setPowerWithoutAcceleration(0,0);
-                break;
-
-
-
-
-            case 300:
-                readCamera();
-                if (getStateRuntime() > 2.5) {stateCurrent++;}
-                break;
-
-            case 301:
-                if (readCamera() == LEFT || readCamera() == UNKNOWN) {
-                    stateCurrent = 310;
-                }
-                if (readCamera() == CENTER) {
-                    stateCurrent = 330;
-                }
-                if (readCamera() == RIGHT) {
-                    stateCurrent = 350;
-                }
-                break;
-
-
-            case 310:
-                jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 0.2) {
-                    glyphLift.stop();
-                }
-                else {
-                    glyphLift.raiseLiftPowerUp();
-                }
-                if (getStateRuntime() > 0.9) stateCurrent++;
-                break;
-
-            case 311:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 2.05) stateCurrent++;
-                break;
-
-            case 312:
-                CompareAllianceJewel();
-                if (jewelOption == 2) {
-                    drivetrain.setPowerWithoutAcceleration(.2, .2);
-                }
-                if (jewelOption == 4) {
-                    drivetrain.setPowerWithoutAcceleration(-.2, -.2);
-                }
-                if (getStateRuntime() > .2) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    drivetrain.stop();
-                    stateCurrent++;
-                }
-                break;
-
-            case 313:
-                jewelKnocker.changeGoUp();
-                if (getStateRuntime() > .5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 314:
-                backUltra.getUltrasonicReading();
-                drivetrain.setPowerWithoutAcceleration(-.8,-.8);
-                if (backUltra.getUltrasonicReading() <= TURN_DISTANCE) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
-                    stateCurrent++;
-                }
-                break;
-
-            case 315:
-                gyroSensor.resetGyro();
-                backUltra.getUltrasonicReading();
-                if (getStateRuntime() > .5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 316:
-                drivetrain.setPowerWithoutAcceleration(-.5,.5);
-                if (gyroSensor.headingGyro() <= -77) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
-                    stateCurrent++;
-                }
-                break;
-
-            case 317:
-                drivetrain.setPowerWithoutAcceleration(.1,.1);
-                if (backUltra.getUltrasonicReading() >= BLUE_LEFTS_LEFT) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    gyroSensor.resetGyro();
-                    stateCurrent++;
-                }
-                break;
-
-            case 318:
-                drivetrain.setPowerWithoutAcceleration(-.5,.5);
-                if (gyroSensor.headingGyro() <= -77) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
-                    stateCurrent++;
-                }
-                break;
-
-            case 319:
-                drivetrain.setPowerWithoutAcceleration(0,0);
-                stateCurrent++;
-                break;
-
-            case 320:
-                drivetrain.setPowerWithoutAcceleration(.1,.1);
-                if (getStateRuntime() > 1.5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 321:
-                glyphLift.midAuto();
-                drivetrain.setPowerWithoutAcceleration(-.16, -.16);
-                if (getStateRuntime() > .15) { stateCurrent++; }
-                break;
-
-            case 322:
-                drivetrain.setPowerWithoutAcceleration(0,0);
-                break;
-
-
-
-
-            case 330:
-                jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 0.2) {
-                    glyphLift.stop();
-                }
-                else {
-                    glyphLift.raiseLiftPowerUp();
-                }
-                if (getStateRuntime() > 0.9) stateCurrent++;
-                break;
-
-            case 331:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 2.05) stateCurrent++;
-                break;
-
-            case 332:
-                CompareAllianceJewel();
-                if (jewelOption == 2) {
-                    drivetrain.setPowerWithoutAcceleration(.2, .2);
-                }
-                if (jewelOption == 4) {
-                    drivetrain.setPowerWithoutAcceleration(-.2, -.2);
-                }
-                if (getStateRuntime() > .2) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    drivetrain.stop();
-                    stateCurrent++;
-                }
-                break;
-
-            case 333:
-                jewelKnocker.changeGoUp();
-                if (getStateRuntime() > .5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 334:
-                backUltra.getUltrasonicReading();
-                drivetrain.setPowerWithoutAcceleration(-.8,-.8);
-                if (backUltra.getUltrasonicReading() <= TURN_DISTANCE) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
-                    stateCurrent++;
-                }
-                break;
-
-            case 335:
-                gyroSensor.resetGyro();
-                backUltra.getUltrasonicReading();
-                if (getStateRuntime() > .5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 336:
-                drivetrain.setPowerWithoutAcceleration(-.5,.5);
-                if (gyroSensor.headingGyro() <= -77) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
-                    stateCurrent++;
-                }
-                break;
-
-            case 337:
-                drivetrain.setPowerWithoutAcceleration(.1,.1);
-                if (backUltra.getUltrasonicReading() >= BLUE_LEFTS_CENTER) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    gyroSensor.resetGyro();
-                    stateCurrent++;
-                }
-                break;
-
-            case 338:
-                drivetrain.setPowerWithoutAcceleration(-.5,.5);
-                if (gyroSensor.headingGyro() <= -77) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
-                    stateCurrent++;
-                }
-                break;
-
-            case 339:
-                drivetrain.setPowerWithoutAcceleration(0,0);
-                stateCurrent++;
-                break;
-
-            case 340:
-                drivetrain.setPowerWithoutAcceleration(.1,.1);
-                if (getStateRuntime() > 1.5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 341:
-                glyphLift.midAuto();
-                drivetrain.setPowerWithoutAcceleration(-.16, -.16);
-                if (getStateRuntime() > .15) { stateCurrent++; }
-                break;
-
-            case 342:
-                drivetrain.setPowerWithoutAcceleration(0,0);
-                break;
-
-
-
-            case 350:
-                jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 0.2) {
-                    glyphLift.stop();
-                }
-                else {
-                    glyphLift.raiseLiftPowerUp();
-                }
-                if (getStateRuntime() > 0.9) stateCurrent++;
-                break;
-
-            case 351:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 2.05) stateCurrent++;
-                break;
-
-            case 352:
-                CompareAllianceJewel();
-                if (jewelOption == 2) {
-                    drivetrain.setPowerWithoutAcceleration(.2, .2);
-                }
-                if (jewelOption == 4) {
-                    drivetrain.setPowerWithoutAcceleration(-.2, -.2);
-                }
-                if (getStateRuntime() > .2) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    drivetrain.stop();
-                    stateCurrent++;
-                }
-                break;
-
-            case 353:
-                jewelKnocker.changeGoUp();
-                if (getStateRuntime() > .5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 354:
-                backUltra.getUltrasonicReading();
-                drivetrain.setPowerWithoutAcceleration(-.8,-.8);
-                if (backUltra.getUltrasonicReading() <= TURN_DISTANCE) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
-                    stateCurrent++;
-                }
-                break;
-
-            case 355:
-                gyroSensor.resetGyro();
-                backUltra.getUltrasonicReading();
-                if (getStateRuntime() > .5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 356:
-                drivetrain.setPowerWithoutAcceleration(-.5,.5);
-                if (gyroSensor.headingGyro() <= -77) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
-                    stateCurrent++;
-                }
-                break;
-
-            case 357:
-                drivetrain.setPowerWithoutAcceleration(.1,.1);
-                if (backUltra.getUltrasonicReading() >= BLUE_LEFTS_RIGHT) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    gyroSensor.resetGyro();
-                    stateCurrent++;
-                }
-                break;
-
-            case 358:
-                if (gyroSensor.headingGyro() <= -77) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
-                    stateCurrent++;
-                }
-                break;
-
-            case 359:
-                drivetrain.setPowerWithoutAcceleration(0,0);
-                stateCurrent++;
-                break;
-
-            case 360:
-                drivetrain.setPowerWithoutAcceleration(.1,.1);
-                if (getStateRuntime() > 1.5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 361:
-                glyphLift.midAuto();
-                drivetrain.setPowerWithoutAcceleration(-.16, -.16);
-                if (getStateRuntime() > .15) { stateCurrent++; }
-                break;
-
-            case 362:
-                drivetrain.setPowerWithoutAcceleration(0,0);
-                break;
-*/
 
 
             case 400:
@@ -1263,95 +649,74 @@ public class AutonomousSecondMain extends OpMode {
 
 
 
-
-
-
-
             case 410:
-                jewelKnocker.changeGoDown();
                 if (getStateRuntime() > 0.2) {
                     glyphLift.stop();
                 }
                 else {
                     glyphLift.raiseLiftPowerUp();
                 }
-                if (getStateRuntime() > 0.9) stateCurrent++;
+                if (getStateRuntime() > 1) stateCurrent++;
                 break;
 
             case 411:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 2.05) stateCurrent++;
+                jewelKnocker.changeGoDown();
+                if (getStateRuntime() > .9) stateCurrent++;
                 break;
 
             case 412:
-                CompareAllianceJewel();
-                if (jewelOption == 2) {
-                    drivetrain.setPowerWithoutAcceleration(.2, .2);
-                }
-                if (jewelOption == 4) {
-                    drivetrain.setPowerWithoutAcceleration(-.2, -.2);
-                }
-                if (getStateRuntime() > .2) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    drivetrain.stop();
-                    stateCurrent++;
-                }
+                jCSensor.getJewelColor();
+                if (getStateRuntime() > .8) stateCurrent++;
                 break;
 
             case 413:
-                jewelKnocker.changeGoUp();
-                if (getStateRuntime() > .5) {
+                CompareAllianceJewel();
+                if (jewelOption == 2) {
+                    jewelKnocker.hitRight();
+                    stateCurrent++;
+                }
+                else if (jewelOption == 4) {
+                    jewelKnocker.hitLeft();
+                    stateCurrent++;
+                }
+                else {
                     stateCurrent++;
                 }
                 break;
 
             case 414:
-                if (jewelOption == 2) {
-                    drivetrain.setPowerWithoutAcceleration(-.81, -.81);
-                    if (getStateRuntime() > 2.2) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
+                jewelKnocker.resetPos();
+                if (getStateRuntime() > .5) {
+                    jewelKnocker.changeGoUp();
                 }
-                if (jewelOption == 4) {
-                    drivetrain.setPowerWithoutAcceleration(-.3,-.3);
-                    if (getStateRuntime() > .32) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
-                }
-                else {
-                    drivetrain.setPowerWithoutAcceleration(-.3,-.3);
-                    if (getStateRuntime() > .39) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
+                if (getStateRuntime() > 1) {
+                    stateCurrent++;
                 }
                 break;
 
             case 415:
-                frontUltra.getUltrasonicReading();
-                if (getStateRuntime() > .5) {
+                if (drivetrain.getEncodersMagnitude() >= 610) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
                     stateCurrent++;
+                } else {
+                    drivetrain.setPowerWithoutAcceleration(-.08,-.08);
                 }
                 break;
 
-
             case 416:
-                drivetrain.setPowerWithoutAcceleration(-.2,-.2);
-                if (frontUltra.getUltrasonicReading() >= BLUE_RIGHTS_LEFT) {
+                if (backUltra.getUltrasonicReading() >= BLUE_RIGHTS_LEFT) {
                     drivetrain.setPowerWithoutAcceleration(0, 0);
                     gyroSensor.resetGyro();
                     stateCurrent++;
+                } else {
+                    driveGyroCorrection = PROPORTIONAL_GYRO_SCALAR*gyroSensor.headingGyro();
+                    drivetrain.setPowerWithoutAcceleration(-.08 + driveGyroCorrection,-.08 - driveGyroCorrection);
                 }
                 break;
 
             case 417:
-                drivetrain.setPowerWithoutAcceleration(.35,-.35);
-                if (gyroSensor.headingGyro() >= 75) {
+                drivetrain.setPowerWithoutAcceleration(.38,-.38);
+                if (gyroSensor.headingGyro() >= 73) {
                     stateCurrent++;
                 }
                 break;
@@ -1371,106 +736,100 @@ public class AutonomousSecondMain extends OpMode {
             case 420:
                 glyphLift.midAuto();
                 drivetrain.setPowerWithoutAcceleration(-.16, -.16);
-                if (getStateRuntime() > .15) { stateCurrent++; }
+                if (getStateRuntime() > .15) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
                 break;
 
             case 421:
-                drivetrain.setPowerWithoutAcceleration(0,0);
+                drivetrain.setPowerWithoutAcceleration(.15,.15);
+                if (getStateRuntime() > 1.2) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
                 break;
 
-
-
-
+            case 422:
+                drivetrain.setPowerWithoutAcceleration(-.16,-.16);
+                if (getStateRuntime() > .15) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
+                break;
 
 
 
 
 
             case 430:
-                jewelKnocker.changeGoDown();
                 if (getStateRuntime() > 0.2) {
                     glyphLift.stop();
                 }
                 else {
                     glyphLift.raiseLiftPowerUp();
                 }
-                if (getStateRuntime() > 0.9) stateCurrent++;
+                if (getStateRuntime() > 1) stateCurrent++;
                 break;
 
             case 431:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 2.05) stateCurrent++;
+                jewelKnocker.changeGoDown();
+                if (getStateRuntime() > .9) stateCurrent++;
                 break;
 
             case 432:
-                CompareAllianceJewel();
-                if (jewelOption == 2) {
-                    drivetrain.setPowerWithoutAcceleration(.2, .2);
-                }
-                if (jewelOption == 4) {
-                    drivetrain.setPowerWithoutAcceleration(-.2, -.2);
-                }
-                if (getStateRuntime() > .2) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    drivetrain.stop();
-                    stateCurrent++;
-                }
+                jCSensor.getJewelColor();
+                if (getStateRuntime() > .8) stateCurrent++;
                 break;
 
             case 433:
-                jewelKnocker.changeGoUp();
-                if (getStateRuntime() > .5) {
+                CompareAllianceJewel();
+                if (jewelOption == 2) {
+                    jewelKnocker.hitRight();
+                    stateCurrent++;
+                }
+                else if (jewelOption == 4) {
+                    jewelKnocker.hitLeft();
+                    stateCurrent++;
+                }
+                else {
                     stateCurrent++;
                 }
                 break;
 
             case 434:
-                if (jewelOption == 2) {
-                    drivetrain.setPowerWithoutAcceleration(-.81, -.81);
-                    if (getStateRuntime() > 2.2) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
+                jewelKnocker.resetPos();
+                if (getStateRuntime() > .5) {
+                    jewelKnocker.changeGoUp();
                 }
-                if (jewelOption == 4) {
-                    drivetrain.setPowerWithoutAcceleration(-.3,-.3);
-                    if (getStateRuntime() > .32) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
-                }
-                else {
-                    drivetrain.setPowerWithoutAcceleration(-.3,-.3);
-                    if (getStateRuntime() > .39) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
+                if (getStateRuntime() > 1) {
+                    stateCurrent++;
                 }
                 break;
 
             case 435:
-                frontUltra.getUltrasonicReading();
-                if (getStateRuntime() > .5) {
+                if (drivetrain.getEncodersMagnitude() >= 610) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
                     stateCurrent++;
+                } else {
+                    drivetrain.setPowerWithoutAcceleration(-.08,-.08);
                 }
                 break;
 
-
             case 436:
-                drivetrain.setPowerWithoutAcceleration(-.2,-.2);
-                if (frontUltra.getUltrasonicReading() >= BLUE_RIGHTS_CENTER) {
+                if (backUltra.getUltrasonicReading() >= BLUE_RIGHTS_CENTER) {
                     drivetrain.setPowerWithoutAcceleration(0, 0);
                     gyroSensor.resetGyro();
                     stateCurrent++;
+                } else {
+                    driveGyroCorrection = PROPORTIONAL_GYRO_SCALAR*gyroSensor.headingGyro();
+                    drivetrain.setPowerWithoutAcceleration(-.08 + driveGyroCorrection,-.08 - driveGyroCorrection);
                 }
                 break;
 
             case 437:
-                drivetrain.setPowerWithoutAcceleration(.35,-.35);
-                if (gyroSensor.headingGyro() >= 75) {
+                drivetrain.setPowerWithoutAcceleration(.38,-.38);
+                if (gyroSensor.headingGyro() >= 73) {
                     stateCurrent++;
                 }
                 break;
@@ -1490,13 +849,27 @@ public class AutonomousSecondMain extends OpMode {
             case 440:
                 glyphLift.midAuto();
                 drivetrain.setPowerWithoutAcceleration(-.16, -.16);
-                if (getStateRuntime() > .15) { stateCurrent++; }
+                if (getStateRuntime() > .15) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
                 break;
 
             case 441:
-                drivetrain.setPowerWithoutAcceleration(0,0);
+                drivetrain.setPowerWithoutAcceleration(.15,.15);
+                if (getStateRuntime() > 1.2) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
                 break;
 
+            case 442:
+                drivetrain.setPowerWithoutAcceleration(-.16,-.16);
+                if (getStateRuntime() > .15) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
+                break;
 
 
 
@@ -1504,90 +877,73 @@ public class AutonomousSecondMain extends OpMode {
 
 
             case 450:
-                jewelKnocker.changeGoDown();
                 if (getStateRuntime() > 0.2) {
                     glyphLift.stop();
                 }
                 else {
                     glyphLift.raiseLiftPowerUp();
                 }
-                if (getStateRuntime() > 0.9) stateCurrent++;
+                if (getStateRuntime() > 1) stateCurrent++;
                 break;
 
             case 451:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 2.05) stateCurrent++;
+                jewelKnocker.changeGoDown();
+                if (getStateRuntime() > .9) stateCurrent++;
                 break;
 
             case 452:
-                CompareAllianceJewel();
-                if (jewelOption == 2) {
-                    drivetrain.setPowerWithoutAcceleration(.2, .2);
-                }
-                if (jewelOption == 4) {
-                    drivetrain.setPowerWithoutAcceleration(-.2, -.2);
-                }
-                if (getStateRuntime() > .2) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    drivetrain.stop();
-                    stateCurrent++;
-                }
+                jCSensor.getJewelColor();
+                if (getStateRuntime() > .8) stateCurrent++;
                 break;
 
             case 453:
-                jewelKnocker.changeGoUp();
-                if (getStateRuntime() > .5) {
+                CompareAllianceJewel();
+                if (jewelOption == 2) {
+                    jewelKnocker.hitRight();
+                    stateCurrent++;
+                }
+                else if (jewelOption == 4) {
+                    jewelKnocker.hitLeft();
+                    stateCurrent++;
+                }
+                else {
                     stateCurrent++;
                 }
                 break;
 
             case 454:
-                if (jewelOption == 2) {
-                    drivetrain.setPowerWithoutAcceleration(-.81, -.81);
-                    if (getStateRuntime() > 2.2) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
+                jewelKnocker.resetPos();
+                if (getStateRuntime() > .5) {
+                    jewelKnocker.changeGoUp();
                 }
-                if (jewelOption == 4) {
-                    drivetrain.setPowerWithoutAcceleration(-.3,-.3);
-                    if (getStateRuntime() > .32) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
-                }
-                else {
-                    drivetrain.setPowerWithoutAcceleration(-.3,-.3);
-                    if (getStateRuntime() > .39) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
+                if (getStateRuntime() > 1) {
+                    stateCurrent++;
                 }
                 break;
 
             case 455:
-                frontUltra.getUltrasonicReading();
-                if (getStateRuntime() > .5) {
+                if (drivetrain.getEncodersMagnitude() >= 610) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
                     stateCurrent++;
+                } else {
+                    drivetrain.setPowerWithoutAcceleration(-.08,-.08);
                 }
                 break;
 
-
             case 456:
-                drivetrain.setPowerWithoutAcceleration(-.2,-.2);
-                if (frontUltra.getUltrasonicReading() >= BLUE_RIGHTS_RIGHT) {
+                if (backUltra.getUltrasonicReading() >= BLUE_RIGHTS_RIGHT) {
                     drivetrain.setPowerWithoutAcceleration(0, 0);
                     gyroSensor.resetGyro();
                     stateCurrent++;
+                } else {
+                    driveGyroCorrection = PROPORTIONAL_GYRO_SCALAR*gyroSensor.headingGyro();
+                    drivetrain.setPowerWithoutAcceleration(-.08 + driveGyroCorrection,-.08 - driveGyroCorrection);
                 }
                 break;
 
             case 457:
-                drivetrain.setPowerWithoutAcceleration(.35,-.35);
-                if (gyroSensor.headingGyro() >= 75) {
+                drivetrain.setPowerWithoutAcceleration(.38,-.38);
+                if (gyroSensor.headingGyro() >= 73) {
                     stateCurrent++;
                 }
                 break;
@@ -1607,117 +963,27 @@ public class AutonomousSecondMain extends OpMode {
             case 460:
                 glyphLift.midAuto();
                 drivetrain.setPowerWithoutAcceleration(-.16, -.16);
-                if (getStateRuntime() > .15) { stateCurrent++; }
+                if (getStateRuntime() > .15) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
                 break;
 
             case 461:
-                drivetrain.setPowerWithoutAcceleration(0,0);
-                break;
-
-                /*
-
-                case 410:
-                jewelKnocker.changeGoDown();
-                if (getStateRuntime() > 0.2) {
-                    glyphLift.stop();
-                }
-                else {
-                    glyphLift.raiseLiftPowerUp();
-                }
-                if (getStateRuntime() > 0.9) stateCurrent++;
-                break;
-
-            case 411:
-                jCSensor.getJewelColor();
-                if (getStateRuntime() > 2.05) stateCurrent++;
-                break;
-
-            case 412:
-                CompareAllianceJewel();
-                if (jewelOption == 2) {
-                    drivetrain.setPowerWithoutAcceleration(.2, .2);
-                }
-                if (jewelOption == 4) {
-                    drivetrain.setPowerWithoutAcceleration(-.2, -.2);
-                }
-                if (getStateRuntime() > .15) {
-                    drivetrain.setPowerWithoutAcceleration(0, 0);
-                    drivetrain.stop();
-                    stateCurrent++;
-                }
-                break;
-
-            case 413:
-                jewelKnocker.changeGoUp();
-                if (getStateRuntime() > .5) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 414:
-                if (jewelOption == 2) {
-                    drivetrain.setPowerWithoutAcceleration(-1, -1);
-                    if (getStateRuntime() > 2.2) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
-                }
-                if (jewelOption == 4) {
-                    drivetrain.setPowerWithoutAcceleration(-.3,-.3);
-                    if (getStateRuntime() > .32) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
-                }
-                else {
-                    drivetrain.setPowerWithoutAcceleration(-.3,-.3);
-                    if (getStateRuntime() > .39) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
-                }
-                break;
-
-            case 415:
-                drivetrain.setPowerWithoutAcceleration(-.2,-.2);
-                if (getStateRuntime() > .9) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
-                    gyroSensor.resetGyro();
-                    stateCurrent++;
-                }
-                break;
-
-            case 416:
-                 drivetrain.setPowerWithoutAcceleration(.35,-.35);
-                if (gyroSensor.headingGyro() >= 75) {
-                    stateCurrent++;
-                }
-                break;
-
-            case 417:
                 drivetrain.setPowerWithoutAcceleration(.15,.15);
-                if (getStateRuntime() > 1.5) {
-                    glyphLift.midAuto();
+                if (getStateRuntime() > 1.2) {
                     drivetrain.setPowerWithoutAcceleration(0,0);
                     stateCurrent++;
                 }
                 break;
 
-
-            case 418:
+            case 462:
                 drivetrain.setPowerWithoutAcceleration(-.16,-.16);
-                if (getStateRuntime() > .2) {
+                if (getStateRuntime() > .15) {
                     drivetrain.setPowerWithoutAcceleration(0,0);
                     stateCurrent++;
                 }
                 break;
-                 */
-
-
-
 
             default:
                 drivetrain.stop();
