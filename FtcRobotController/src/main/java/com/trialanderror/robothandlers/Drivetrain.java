@@ -86,18 +86,18 @@ public class Drivetrain {
         return (Math.abs(getEncoderLeft()) + Math.abs(getEncoderRight())) / 2;
     }
 
-    public void setBreakModeAuto() {
-        leftFront.autoBreakMode();
-        leftBack.autoBreakMode();
-        rightFront.autoBreakMode();
-        rightBack.autoBreakMode();
+    public void setBrakeModeAuto() {
+        leftFront.autoBrakeMode();
+        leftBack.autoBrakeMode();
+        rightFront.autoBrakeMode();
+        rightBack.autoBrakeMode();
     }
 
-    public void setBreakModeTele() {
-        leftFront.teleBreakMode();
-        leftBack.teleBreakMode();
-        rightFront.teleBreakMode();
-        rightBack.teleBreakMode();
+    public void setBrakeModeTele() {
+        leftFront.teleBrakeMode();
+        leftBack.teleBrakeMode();
+        rightFront.teleBrakeMode();
+        rightBack.teleBrakeMode();
     }
 
     public boolean isDriveEncodersPast(int aDistance) {

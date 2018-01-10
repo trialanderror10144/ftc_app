@@ -96,7 +96,7 @@ public class AutonomousSecondMain extends OpMode {
         glyphLift = new GlyphLift((hardwareMap));
         jewelKnocker = new JewelKnocker((hardwareMap));
         drivetrain = new Drivetrain((hardwareMap));
-        drivetrain.setBreakModeAuto();
+        drivetrain.setBrakeModeAuto();
         jCSensor = new JewelColorSensor(hardwareMap.colorSensor.get("csensor"), 0x3c);
         frontUltra = new PanelRangeSensor((hardwareMap.i2cDevice.get("rsensorback")), 0x28);
         backUltra = new PanelRangeSensor((hardwareMap.i2cDevice.get("rsensorfront")), 0x10);
@@ -506,20 +506,11 @@ public class AutonomousSecondMain extends OpMode {
                 break;
 
             case 204:
-                    drivetrain.setPowerWithoutAcceleration(.3,.3);
-                    if (getStateRuntime() > .39) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
-                break;
-
-            case 205:
-                    drivetrain.setPowerWithoutAcceleration(.1, .1);
-                    if (frontUltra.getUltrasonicReading() <= 35) {
-                        drivetrain.setPowerWithoutAcceleration(0,0);
-                        stateCurrent++;
-                    }
+                drivetrain.setPowerWithoutAcceleration(.08,.08);
+                if (drivetrain.getEncodersMagnitude() > 800) {
+                    drivetrain.setPowerWithoutAcceleration(0,0);
+                    stateCurrent++;
+                }
                 break;
 
 
@@ -568,21 +559,14 @@ public class AutonomousSecondMain extends OpMode {
                 break;
 
             case 304:
-                    drivetrain.setPowerWithoutAcceleration(-.3,-.3);
-                    if (getStateRuntime() > .39) {
-                        drivetrain.setPowerWithoutAcceleration(0, 0);
-                        drivetrain.stop();
-                        stateCurrent++;
-                    }
-                break;
-
-            case 305:
-                drivetrain.setPowerWithoutAcceleration(-.1, -.1);
-                if (backUltra.getUltrasonicReading() <= 35) {
+                drivetrain.setPowerWithoutAcceleration(-.08,-.08);
+                if (drivetrain.getEncodersMagnitude() > 800) {
                     drivetrain.setPowerWithoutAcceleration(0,0);
                     stateCurrent++;
                 }
                 break;
+
+
 
                 /*
 //RED ALLIANCE RIGHT POSITION

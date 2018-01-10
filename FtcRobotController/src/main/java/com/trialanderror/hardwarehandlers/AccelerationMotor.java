@@ -67,9 +67,13 @@ public class AccelerationMotor {
         setTargetPower(0.0);
     }
 
-    public void autoBreakMode() { acceleratedMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE); }
+    public void autoBrakeMode() {
+        acceleratedMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+    }
 
-    public void teleBreakMode() { acceleratedMotor.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);}
+    public void teleBrakeMode() {
+        acceleratedMotor.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
+    }
 
     public synchronized void update() {
         //Robot driving forward.
