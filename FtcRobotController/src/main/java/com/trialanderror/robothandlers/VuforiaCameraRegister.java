@@ -22,6 +22,7 @@ public class VuforiaCameraRegister {
     private VuforiaTrackable relicTemplate;
     private VuforiaLocalizer.Parameters params;
     private VuforiaLocalizer vuforia;
+    private CryptoKeys snapshot;
 
     public VuforiaCameraRegister() throws InterruptedException {
 
@@ -39,20 +40,22 @@ public class VuforiaCameraRegister {
 
         relicTrackables.activate();
     }
-
-    public CryptoKeys getCryptoKey() {
+    public void takeSnapshot() {
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
         if (vuMark == RelicRecoveryVuMark.LEFT) {
-            return LEFT;
+            snapshot = LEFT;
         } else if (vuMark == RelicRecoveryVuMark.CENTER) {
-            return CENTER;
+            snapshot =  CENTER;
         } else if (vuMark == RelicRecoveryVuMark.RIGHT) {
-            return RIGHT;
+            snapshot = RIGHT;
         } else {
-            return UNKNOWN;
+            snapshot = UNKNOWN;
         }
     }
 
+    public CryptoKeys getCryptoKey() {
+        return snapshot;
+    }
     String format(OpenGLMatrix transformationMatrix) {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }
