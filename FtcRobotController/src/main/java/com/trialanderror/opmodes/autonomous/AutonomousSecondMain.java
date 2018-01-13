@@ -83,9 +83,9 @@ public class AutonomousSecondMain extends OpMode {
     //The opposite of the Red Left Distances, since its flipped ????? NOT TRUE
 
     //400
-    public final static double BLUE_RIGHTS_LEFT = 138.0; //Goes to Center
-    public final static double BLUE_RIGHTS_CENTER = 119.0; // G
-    public final static double BLUE_RIGHTS_RIGHT = 100.0;
+    public final static double BLUE_RIGHTS_LEFT = 147.0;
+    public final static double BLUE_RIGHTS_CENTER = 133.0;
+    public final static double BLUE_RIGHTS_RIGHT = 120.0;
 
     public final static double PROPORTIONAL_GYRO_SCALAR = 0.0025;
     private double driveGyroCorrection;
@@ -495,7 +495,7 @@ public class AutonomousSecondMain extends OpMode {
 
             case 408:
                 if (glyphOption == LEFT) {
-                    if (backUltra.getUltrasonicReading() >= BLUE_RIGHTS_LEFT) {
+                    if (frontUltra.getUltrasonicReading() >= BLUE_RIGHTS_LEFT) {
                         drivetrain.setPowerWithoutAcceleration(0, 0);
                         gyroSensor.resetGyro();
                         stateCurrent++;
@@ -506,7 +506,7 @@ public class AutonomousSecondMain extends OpMode {
                 }
 
                 if (glyphOption == CENTER) {
-                    if (backUltra.getUltrasonicReading() >= BLUE_RIGHTS_CENTER) {
+                    if (frontUltra.getUltrasonicReading() >= BLUE_RIGHTS_CENTER) {
                         drivetrain.setPowerWithoutAcceleration(0, 0);
                         gyroSensor.resetGyro();
                         stateCurrent++;
@@ -517,7 +517,7 @@ public class AutonomousSecondMain extends OpMode {
                 }
 
                 if (glyphOption == RIGHT) {
-                    if (backUltra.getUltrasonicReading() >= BLUE_RIGHTS_RIGHT) {
+                    if (frontUltra.getUltrasonicReading() >= BLUE_RIGHTS_RIGHT) {
                         drivetrain.setPowerWithoutAcceleration(0, 0);
                         gyroSensor.resetGyro();
                         stateCurrent++;
@@ -529,8 +529,8 @@ public class AutonomousSecondMain extends OpMode {
                 break;
 
             case 409:
-                drivetrain.setPowerWithoutAcceleration(.38,-.38);
-                if (gyroSensor.headingGyro() >= 73) {
+                drivetrain.setPowerWithoutAcceleration(.45,-.45);
+                if (gyroSensor.headingGyro() >= 71) {
                     stateCurrent++;
                 }
                 break;

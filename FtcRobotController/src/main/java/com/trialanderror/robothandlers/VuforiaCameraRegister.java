@@ -52,7 +52,6 @@ public class VuforiaCameraRegister {
             snapshot = UNKNOWN;
         }
     }
-
     public CryptoKeys getCryptoKey() {
         return snapshot;
     }
