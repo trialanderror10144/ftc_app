@@ -65,9 +65,9 @@ public class AutonomousSecondMain extends OpMode {
     //List of Values for Optical Distance Sensor (Ultrasonic)
 
     //100 Use Back/Top Sensor
-    public final static double RED_LEFTS_LEFT = 94.0;
+    public final static double RED_LEFTS_LEFT = 122.0;
     public final static double RED_LEFTS_CENTER = 108.0;
-    public final static double RED_LEFTS_RIGHT = 122.0;
+    public final static double RED_LEFTS_RIGHT = 94.0;
 
 
     //200
@@ -79,12 +79,6 @@ public class AutonomousSecondMain extends OpMode {
     public final static double BLUE_LEFTS_LEFT = 37.0;
     public final static double BLUE_LEFTS_CENTER = 56.0;
     public final static double BLUE_LEFTS_RIGHT = 75.0;
-
-
-    //For 200 and 300
-    public static final double TURN_DISTANCE = 37.0;
-
-    //The opposite of the Red Left Distances, since its flipped ????? NOT TRUE
 
     //400
     public final static double BLUE_RIGHTS_LEFT = 147.0;

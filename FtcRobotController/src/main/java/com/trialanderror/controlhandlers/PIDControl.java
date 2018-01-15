@@ -48,11 +48,12 @@ public class PIDControl {
     }
     public void derivativeErrorCalc(double aActual, double aTime) {
             errorCalc = setpoint - aActual;
+            timePassed = aTime;
         if (errorCalc == 0) {
             derivative = 0;
         }
         if (errorCalc != 0) {
-            derivative = errorCalc / aTime ;
+            derivative = errorCalc / timePassed ;
         }
     }
     public void updatePidValues(double aActual, double aTime) {
