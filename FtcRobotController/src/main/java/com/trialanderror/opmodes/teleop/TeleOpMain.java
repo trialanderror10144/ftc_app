@@ -90,6 +90,7 @@ public class TeleOpMain extends OpMode {
             relicGrabber.clampRelic();
         }
 
+
         //Precision for Clamp
         if (gamepad2.left_bumper) {
             relicGrabber.clampSmallDelta();
@@ -98,6 +99,7 @@ public class TeleOpMain extends OpMode {
             relicGrabber.openSmallDelta();
         }
 
+
         //x is down, y is up
         if (gamepad2.x) {
             relicGrabber.twistDeltaRelic(DELTA_SERVO);
@@ -105,7 +107,6 @@ public class TeleOpMain extends OpMode {
         if (gamepad2.y) {
             relicGrabber.twistDeltaRelic(-DELTA_SERVO);
         }
-
 
 
         if (slowDrive(gamepad1)) {

@@ -168,12 +168,44 @@ public class Drivetrain {
         rightBack.setDirectPower(aRightPower);
     }
 
+    public void setPowerWithPidDeadbandCorrection(double aLeftPower, double aRightPower) {
+        if(aLeftPower > 0) {
+            leftFront.setDirectPower(aLeftPower + measuredPidTurningBasePower);
+            leftBack.setDirectPower(aLeftPower + measuredPidTurningBasePower);
+        }
+        else if(aLeftPower < 0) {
+            leftFront.setDirectPower(aLeftPower - measuredPidTurningBasePower);
+            leftBack.setDirectPower(aLeftPower - measuredPidTurningBasePower);
+        }
+        else {
+            leftFront.setDirectPower(0);
+            leftBack.setDirectPower(0);
+        }
+
+        if(aRightPower > 0) {
+            rightFront.setDirectPower(aRightPower + measuredPidTurningBasePower);
+            rightBack.setDirectPower(aRightPower + measuredPidTurningBasePower);
+        }
+        else if(aRightPower < 0) {
+            rightFront.setDirectPower(aRightPower - measuredPidTurningBasePower);
+            rightBack.setDirectPower(aRightPower - measuredPidTurningBasePower);
+        }
+        else {
+            rightFront.setDirectPower(0);
+            rightBack.setDirectPower(0);
+        }
+    }
+
     private void setAccelerationRate(double anAcceleration, double aDeceleration){
         leftFront.setAccelerationRates(anAcceleration, aDeceleration);
         leftBack.setAccelerationRates(anAcceleration, aDeceleration);
         rightFront.setAccelerationRates(anAcceleration, aDeceleration);
         rightBack.setAccelerationRates(anAcceleration, aDeceleration);
     }
+
+   /* public void setMeasuredPidTurningBasePower(double aTurningBasePower) {
+        measuredPidTurningBasePower = aTurningBasePower;
+    } */
 
     public void setMinimumMotorPower(double aMinimumPower) {
         leftFront.setMinPower(aMinimumPower);

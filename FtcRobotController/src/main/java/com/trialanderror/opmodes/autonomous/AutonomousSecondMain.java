@@ -3,6 +3,7 @@ package com.trialanderror.opmodes.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.trialanderror.controlhandlers.PIDControl;
 import com.trialanderror.robothandlers.Drivetrain;
 import com.trialanderror.robothandlers.GlyphLift;
 import com.trialanderror.robothandlers.JewelKnocker;
@@ -43,6 +44,9 @@ public class AutonomousSecondMain extends OpMode {
     private PanelRangeSensor backUltra;
     private PanelRangeSensor frontUltra;
     private GyroTurnSensor gyroSensor;
+    private PIDControl gyroPID;
+    private final static double PID_GYRO_TURN_VALUES[] = {.014, 0.0, 0.0};
+
     private Alliances allianceColor;
     private PositionToWall position;
     private int jewelOption;
@@ -106,6 +110,7 @@ public class AutonomousSecondMain extends OpMode {
         backUltra = new PanelRangeSensor((hardwareMap.i2cDevice.get("rsensorfront")), 0x10);
         relicGrabber = new RelicGrabber((hardwareMap));
         gyroSensor = new GyroTurnSensor((hardwareMap));
+        gyroPID = new PIDControl(PID_GYRO_TURN_VALUES[0], PID_GYRO_TURN_VALUES[1], PID_GYRO_TURN_VALUES[2]);
 
         //Creates Select Menu on Robot Controller
         OptionMenu.Builder ParamsBuilder = new OptionMenu.Builder(hardwareMap.appContext);
@@ -264,25 +269,32 @@ public class AutonomousSecondMain extends OpMode {
                 break;
 
             case 109:
+                gyroPID.resetValues(getRuntime());
+                gyroPID.setSetpoint(90);
+                stateCurrent++;
+                break;
+
+
+            case 110:
                 drivetrain.setPowerWithoutAcceleration(.38,-.38);
                 if (gyroSensor.headingGyro() >= 73) {
                     stateCurrent++;
                 }
                 break;
 
-            case 110:
+            case 111:
                 drivetrain.setPowerWithoutAcceleration(0,0);
                 stateCurrent++;
                 break;
 
-            case 111:
+            case 112:
                 drivetrain.setPowerWithoutAcceleration(.1,.1);
                 if (getStateRuntime() > 1.5) {
                     stateCurrent++;
                 }
                 break;
 
-            case 112:
+            case 113:
                 glyphLift.midAuto();
                 drivetrain.setPowerWithoutAcceleration(-.16, -.16);
                 if (getStateRuntime() > .15) {
@@ -291,7 +303,7 @@ public class AutonomousSecondMain extends OpMode {
                 }
                 break;
 
-            case 113:
+            case 114:
                 drivetrain.setPowerWithoutAcceleration(.15,.15);
                 if (getStateRuntime() > 1.2) {
                     drivetrain.setPowerWithoutAcceleration(0,0);
@@ -299,7 +311,7 @@ public class AutonomousSecondMain extends OpMode {
                 }
                 break;
 
-            case 114:
+            case 115:
                 drivetrain.setPowerWithoutAcceleration(-.16,-.16);
                 if (getStateRuntime() > .15) {
                     drivetrain.setPowerWithoutAcceleration(0,0);
@@ -356,7 +368,7 @@ public class AutonomousSecondMain extends OpMode {
 
             case 205:
                 drivetrain.setPowerWithoutAcceleration(.08,.08);
-                if (drivetrain.getEncodersMagnitude() > 800) {
+                if (drivetrain.getEncodersMagnitude() > 850) {
                     drivetrain.setPowerWithoutAcceleration(0,0);
                     stateCurrent++;
                 }
@@ -413,7 +425,7 @@ public class AutonomousSecondMain extends OpMode {
 
             case 305:
                 drivetrain.setPowerWithoutAcceleration(-.08,-.08);
-                if (drivetrain.getEncodersMagnitude() > 610) {
+                if (drivetrain.getEncodersMagnitude() > 850) {
                     drivetrain.setPowerWithoutAcceleration(0,0);
                     stateCurrent++;
                 }
@@ -580,16 +592,17 @@ public class AutonomousSecondMain extends OpMode {
                 glyphLift.stop();
                 relicGrabber.noHorizMove();
         }
-        telemetry.addData("Alliance", allianceColor);
-        telemetry.addData("Position (Wall):", position);
-        telemetry.addData("Switch Statement: ", stateCurrent);
+        //telemetry.addData("Alliance", allianceColor);
+        //telemetry.addData("Position (Wall):", position);
+        //telemetry.addData("Switch Statement: ", stateCurrent);
         telemetry.addData("Crypto Pos:", camera.getCryptoKey());
-        telemetry.addData("Jewel Color:", jCSensor.getJewelColor());
-        telemetry.addData("Jewel Option:", jewelOption);
+        //telemetry.addData("Jewel Color:", jCSensor.getJewelColor());
+        //telemetry.addData("Jewel Option:", jewelOption);
         telemetry.addData("Front Range (CM):", frontUltra.getUltrasonicReading());
         telemetry.addData("Back Range (CM):", backUltra.getUltrasonicReading());
         telemetry.addData("Gyro Heading:", gyroSensor.headingGyro());
         telemetry.addData("Encoder Distance:", drivetrain.getEncodersMagnitude());
+        telemetry.addData("PID E. Values:", gyroPID.returnErrorValues());
     }
     @Override
     public void stop() {
