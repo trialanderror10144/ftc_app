@@ -270,14 +270,15 @@ public class AutonomousSecondMain extends OpMode {
 
 
             case 110:
-                drivetrain.setPowerWithoutAcceleration(.38,-.38);
-                if (gyroSensor.headingGyro() >= 73) {
+                drivetrain.setPowerPidCorrection(gyroPID.getLeftNewPower(0),gyroPID.getRightNewPower(0));
+                gyroPID.updatePidValues(gyroSensor.headingGyro(), getRuntime());
+                if (gyroPID.errorCalc == 0) {
                     stateCurrent++;
                 }
                 break;
 
             case 111:
-                drivetrain.setPowerWithoutAcceleration(0,0);
+                drivetrain.stop();
                 stateCurrent++;
                 break;
 

@@ -1,5 +1,7 @@
 package com.trialanderror.controlhandlers;
 
+import com.qualcomm.robotcore.util.Range;
+
 /**
  * Created by Esposito's 9-16 on 1/13/2018.
  */
@@ -28,6 +30,13 @@ public class PIDControl {
         aKi = Ki;
         aKd = Kd;
         resetValues(0);
+    }
+    //What would the direction be?
+    public double getLeftNewPower(double aPower) {
+        return Range.clip(aPower + pidValues, -1, 1);
+    }
+    public double getRightNewPower(double aPower) {
+        return Range.clip(aPower - pidValues, -1, 1);
     }
 
     public void resetValues(double aTime) {

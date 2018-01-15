@@ -168,7 +168,7 @@ public class Drivetrain {
         rightBack.setDirectPower(aRightPower);
     }
 
-    public void setPowerWithPidDeadbandCorrection(double aLeftPower, double aRightPower) {
+    public void setPowerPidCorrection(double aLeftPower, double aRightPower) {
         if(aLeftPower > 0) {
             leftFront.setDirectPower(aLeftPower + measuredPidTurningBasePower);
             leftBack.setDirectPower(aLeftPower + measuredPidTurningBasePower);
