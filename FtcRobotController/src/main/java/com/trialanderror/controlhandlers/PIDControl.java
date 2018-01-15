@@ -7,9 +7,6 @@ package com.trialanderror.controlhandlers;
 public class PIDControl {
 
     private double setpoint;
-    private double outputCalc;
-    private double lastError;
-
 
     private double Kp;
     private double Ki;
