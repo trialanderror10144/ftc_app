@@ -50,7 +50,7 @@ public class Drivetrain {
     //    runWithoutEncoderPid();
 
       //  driveEncoderCorrectionPassings = 0;
-    //    measuredPidTurningBasePower = DEFAULT_PID_TURNING_BASE_POWER;
+        measuredPidTurningBasePower = DEFAULT_PID_TURNING_BASE_POWER;
 
         wheelAccelerationThread = new AccelerationThread();
         wheelAccelerationThread.addMotor(leftFront);

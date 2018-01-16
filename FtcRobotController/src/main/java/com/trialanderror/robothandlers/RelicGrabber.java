@@ -34,10 +34,10 @@ public class RelicGrabber {
         twistRelic.setPosition(TWIST_DOWN);
     }
     public void horizontalMove() {
-        extendMotor.setPower(0.7);
+        extendMotor.setPower(1);
     }
     public void horizontalRetract() {
-        extendMotor.setPower(-0.7);
+        extendMotor.setPower(-1);
     }
     public void noHorizMove() {
         extendMotor.setPower(0.0);

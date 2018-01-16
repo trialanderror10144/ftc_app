@@ -45,7 +45,7 @@ public class AutonomousSecondMain extends OpMode {
     private PanelRangeSensor frontUltra;
     private GyroTurnSensor gyroSensor;
     private PIDControl gyroPID;
-    private final static double PID_GYRO_TURN_VALUES[] = {.014, 0.0, 0.0};
+    private final static double PID_GYRO_TURN_VALUES[] = { 0.007, 0.0, 0.00064 };
 
     private Alliances allianceColor;
     private PositionToWall position;
@@ -106,6 +106,7 @@ public class AutonomousSecondMain extends OpMode {
         gyroSensor = new GyroTurnSensor((hardwareMap));
         gyroPID = new PIDControl(PID_GYRO_TURN_VALUES[0], PID_GYRO_TURN_VALUES[1], PID_GYRO_TURN_VALUES[2]);
 
+
         //Creates Select Menu on Robot Controller
         OptionMenu.Builder ParamsBuilder = new OptionMenu.Builder(hardwareMap.appContext);
         //NumberCategory delaySelectMenu = new NumberCategory("Delay"); //ALWAYS IN SECONDS
@@ -157,7 +158,7 @@ public class AutonomousSecondMain extends OpMode {
 
             case 100:
                 camera.takeSnapshot();
-                if (getStateRuntime() > 2.5) {stateCurrent++;}
+                if (getStateRuntime() > 2) {stateCurrent++;}
                 break;
 
             case 101:
@@ -180,7 +181,7 @@ public class AutonomousSecondMain extends OpMode {
                 else {
                     glyphLift.raiseLiftPowerUp();
                 }
-                if (getStateRuntime() > 1) stateCurrent++;
+                if (getStateRuntime() > .5) stateCurrent++;
                 break;
 
             case 103:
@@ -278,8 +279,10 @@ public class AutonomousSecondMain extends OpMode {
                 break;
 
             case 111:
-                drivetrain.stop();
-                stateCurrent++;
+                drivetrain.brake();
+                if (getStateRuntime() > 1) {
+                    stateCurrent++;
+                }
                 break;
 
             case 112:
@@ -368,8 +371,6 @@ public class AutonomousSecondMain extends OpMode {
                     stateCurrent++;
                 }
                 break;
-
-
 
 
 
@@ -589,7 +590,7 @@ public class AutonomousSecondMain extends OpMode {
         }
         //telemetry.addData("Alliance", allianceColor);
         //telemetry.addData("Position (Wall):", position);
-        //telemetry.addData("Switch Statement: ", stateCurrent);
+        telemetry.addData("Switch Statement: ", stateCurrent);
         telemetry.addData("Crypto Pos:", camera.getCryptoKey());
         //telemetry.addData("Jewel Color:", jCSensor.getJewelColor());
         //telemetry.addData("Jewel Option:", jewelOption);

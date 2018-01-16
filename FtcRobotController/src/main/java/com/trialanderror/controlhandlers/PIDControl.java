@@ -46,15 +46,19 @@ public class PIDControl {
 
         setpoint = 0;
     }
+
     public String returnErrorValues() {
         return "P: " + Kp*errorCalc + " I: " + Ki*integral + " D: " +Kd*derivative;
     }
+
     public void setSetpoint(double aValue) {
         setpoint = aValue;
     }
+
     public void pidCalc() {
         pidValues = Kp*errorCalc + Ki*integral + Kd*derivative;
     }
+
     public void derivativeErrorCalc(double aActual, double aTime) {
             errorCalc = setpoint - aActual;
             timePassed = aTime;
@@ -65,6 +69,7 @@ public class PIDControl {
             derivative = errorCalc / timePassed ;
         }
     }
+
     public void updatePidValues(double aActual, double aTime) {
         derivativeErrorCalc(aActual, aTime);
         pidCalc();
