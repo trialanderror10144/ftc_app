@@ -31,10 +31,11 @@ public class PIDControl {
         aKd = Kd;
         resetValues(0);
     }
-    //What would the direction be?
+    //What would the direction be? Left pos = Clockwise
     public double getLeftNewPower(double aPower) {
         return Range.clip(aPower + pidValues, -1, 1);
     }
+
     public double getRightNewPower(double aPower) {
         return Range.clip(aPower - pidValues, -1, 1);
     }
@@ -55,25 +56,18 @@ public class PIDControl {
         setpoint = aValue;
     }
 
-    public void pidCalc() {
-        pidValues = Kp*errorCalc + Ki*integral + Kd*derivative;
-    }
-
-    public void derivativeErrorCalc(double aActual, double aTime) {
-            errorCalc = setpoint - aActual;
-            timePassed = aTime;
+    public void updatePidValues(double aActual, double aTime) {
+        errorCalc = setpoint - aActual;
+        timePassed = aTime;
         if (errorCalc == 0) {
             derivative = 0;
         }
         if (errorCalc != 0) {
             derivative = errorCalc / timePassed ;
         }
-    }
 
-    public void updatePidValues(double aActual, double aTime) {
-        derivativeErrorCalc(aActual, aTime);
-        pidCalc();
+
+        pidValues = Kp*errorCalc + Ki*integral + Kd*derivative;
+
     }
 }
-
-
