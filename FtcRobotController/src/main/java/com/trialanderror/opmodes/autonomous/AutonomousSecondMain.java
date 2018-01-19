@@ -12,7 +12,6 @@ import com.trialanderror.robothandlers.VuforiaCameraRegister;
 import com.trialanderror.sensorhandlers.GyroTurnSensor;
 import com.trialanderror.sensorhandlers.JewelColorSensor;
 import com.trialanderror.sensorhandlers.PanelRangeSensor;
-import com.trialanderror.viewhandlers.NumberCategory;
 import com.trialanderror.viewhandlers.OptionMenu;
 import com.trialanderror.viewhandlers.SingleSelectCategory;
 import com.trialanderror.fieldhandlers.Alliances;
@@ -45,7 +44,9 @@ public class AutonomousSecondMain extends OpMode {
     private PanelRangeSensor frontUltra;
     private GyroTurnSensor gyroSensor;
     private PIDControl gyroPID;
-    private final static double PID_GYRO_TURN_VALUES[] = { 0.007, 0.0, 0.00064 };
+    //private GoodPIDControlTBD goodGyroPID;
+    private final static double PID_GYRO_TURN_VALUES[] = new double[]{ 0.007, 0.0, 0.00064 };
+    //.007, 0, .00064
 
     private Alliances allianceColor;
     private PositionToWall position;
@@ -85,6 +86,9 @@ public class AutonomousSecondMain extends OpMode {
     public final static double BLUE_RIGHTS_CENTER = 133.0;
     public final static double BLUE_RIGHTS_RIGHT = 120.0;
 
+
+    private static final double TURN_MAX_DURATION = 7;
+
     public final static double PROPORTIONAL_GYRO_SCALAR = 0.0025;
     private double driveGyroCorrection;
 
@@ -105,6 +109,7 @@ public class AutonomousSecondMain extends OpMode {
         relicGrabber = new RelicGrabber((hardwareMap));
         gyroSensor = new GyroTurnSensor((hardwareMap));
         gyroPID = new PIDControl(PID_GYRO_TURN_VALUES[0], PID_GYRO_TURN_VALUES[1], PID_GYRO_TURN_VALUES[2]);
+       // goodGyroPID = new GoodPIDControlTBD(PID_GYRO_TURN_VALUES[0], PID_GYRO_TURN_VALUES[1], PID_GYRO_TURN_VALUES[2]);
 
 
         //Creates Select Menu on Robot Controller
@@ -222,6 +227,7 @@ public class AutonomousSecondMain extends OpMode {
             case 107:
                 if (drivetrain.getEncodersMagnitude() >= 610) {
                     drivetrain.setPowerWithoutAcceleration(0,0);
+                    gyroSensor.resetGyro();
                     stateCurrent++;
                 } else {
                     drivetrain.setPowerWithoutAcceleration(.08,.08);
@@ -266,14 +272,23 @@ public class AutonomousSecondMain extends OpMode {
             case 109:
                 gyroPID.resetValues(getRuntime());
                 gyroPID.setSetpoint(90);
+               // goodGyroPID.resetPid(getRuntime());
+               // goodGyroPID.updateSetpoint(90);
                 stateCurrent++;
                 break;
 
 
             case 110:
-                drivetrain.setPowerPidCorrection(gyroPID.getLeftNewPower(0),gyroPID.getRightNewPower(0));
+               /* drivetrain.setPowerPidCorrection(goodGyroPID.getNewMotorOutputValueLeft(0),
+                        goodGyroPID.getNewMotorOutputValueRight(0));
+                goodGyroPID.updatePidValue(gyroSensor.headingGyro(), getRuntime());
+                if (goodGyroPID.isSetpointReahced() || getStateRuntime() > TURN_MAX_DURATION) {
+                    stateCurrent++;
+                } */
+                drivetrain.setPowerPidCorrection(gyroPID.getLeftNewPower(0),
+                        gyroPID.getRightNewPower(0));
                 gyroPID.updatePidValues(gyroSensor.headingGyro(), getRuntime());
-                if (gyroPID.errorCalc == 0) {
+                if (gyroPID.errorCalc <= 0.5 || getStateRuntime() > 6) {
                     stateCurrent++;
                 }
                 break;

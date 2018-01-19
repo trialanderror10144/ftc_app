@@ -71,14 +71,25 @@ public class TeleOpMain extends OpMode {
             glyphLift.stop();
         }
 
-
-        //Relic Extender/Motor Control
-        if (gamepad2.dpad_up) {
-            relicGrabber.horizontalMove();
-        } else if (gamepad2.dpad_down) {
-            relicGrabber.horizontalRetract();
-        } else {
-            relicGrabber.noHorizMove();
+        
+        if (slowRelicDrive(gamepad2)) {
+            if (gamepad2.dpad_up) {
+                relicGrabber.slowHorizMove();
+            } else if (gamepad2.dpad_down) {
+                relicGrabber.slowHorixRetract();
+            } else {
+                relicGrabber.noHorizMove();
+            }
+        }
+        else {
+            //Relic Extender/Motor Control
+            if (gamepad2.dpad_up) {
+                relicGrabber.horizontalMove();
+            } else if (gamepad2.dpad_down) {
+                relicGrabber.horizontalRetract();
+            } else {
+                relicGrabber.noHorizMove();
+            }
         }
 
 
@@ -135,6 +146,9 @@ public class TeleOpMain extends OpMode {
     }
 
     private boolean slowDrive(Gamepad aGamepad) {
+        return (aGamepad.left_trigger > STICK_DIGITAL_THRESHOLD || aGamepad.right_trigger > STICK_DIGITAL_THRESHOLD);
+    }
+    private boolean slowRelicDrive(Gamepad aGamepad) {
         return (aGamepad.left_trigger > STICK_DIGITAL_THRESHOLD || aGamepad.right_trigger > STICK_DIGITAL_THRESHOLD);
     }
 }

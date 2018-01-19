@@ -13,7 +13,7 @@ public class Drivetrain {
 
     private static final int ENCODER_PORT_1 = 1;
     private static final int ENCODER_PORT_2 = 2;
-    private static final double DEFAULT_PID_TURNING_BASE_POWER = 0.23;
+    private static final double DEFAULT_PID_TURNING_BASE_POWER = 0.12;
     private static final double WHEEL_ACCEL_SPEED_PER_SECOND_STRAIGHT = 0.8;
     private static final double WHEEL_DECEL_SPEED_PER_SECOND_STRAIGHT = 15;
     private static final double WHEEL_ACCEL_SPEED_PER_SECOND_TURNING = 15;

@@ -27,21 +27,22 @@ public class RelicGrabber {
         grabRelic = aHardwareMap.servo.get("grabr");
         twistRelic = aHardwareMap.servo.get("twistr");
 
-        extendMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extendMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        extendMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         grabRelic.setPosition(CLOSE_CLAMP);
         twistRelic.setPosition(TWIST_DOWN);
     }
     public void horizontalMove() {
-        extendMotor.setPower(1);
+        extendMotor.setPower(1.0);
     }
     public void horizontalRetract() {
-        extendMotor.setPower(-1);
+        extendMotor.setPower(-1.0);
     }
     public void noHorizMove() {
         extendMotor.setPower(0.0);
     }
+    public void slowHorizMove() { extendMotor.setPower(0.35);}
+    public void slowHorixRetract() { extendMotor.setPower(-0.35);}
     public void openRelic() {
         clampPosition = OPEN_CLAMP;
         grabRelic.setPosition(clampPosition);

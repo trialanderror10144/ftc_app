@@ -20,6 +20,7 @@ public class PIDControl {
     private double integral;
     private double derivative;
     private double timePassed;
+    private double timeNew;
     private double pidValues;
 
     //Is this needed???
@@ -45,7 +46,6 @@ public class PIDControl {
         integral = 0;
         derivative = 0;
 
-        setpoint = 0;
     }
 
     public String returnErrorValues() {
@@ -58,12 +58,11 @@ public class PIDControl {
 
     public void updatePidValues(double aActual, double aTime) {
         errorCalc = setpoint - aActual;
-        timePassed = aTime;
         if (errorCalc == 0) {
             derivative = 0;
         }
         if (errorCalc != 0) {
-            derivative = errorCalc / timePassed ;
+            derivative = (errorCalc / (aTime - timePassed)) ;
         }
 
 
