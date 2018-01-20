@@ -45,7 +45,7 @@ public class AutonomousSecondMain extends OpMode {
     private GyroTurnSensor gyroSensor;
     private PIDControl gyroPID;
     //private GoodPIDControlTBD goodGyroPID;
-    private final static double PID_GYRO_TURN_VALUES[] = new double[]{ 0.007, 0.0, 0.00064 };
+    private final static double PID_GYRO_TURN_VALUES[] = new double[]{ 0.006, 0.0, 0.00064 };
     //.007, 0, .00064
 
     private Alliances allianceColor;
@@ -66,9 +66,9 @@ public class AutonomousSecondMain extends OpMode {
     //List of Values for Optical Distance Sensor (Ultrasonic)
 
     //100 Use Back/Top Sensor
-    public final static double RED_LEFTS_LEFT = 122.0;
-    public final static double RED_LEFTS_CENTER = 108.0;
-    public final static double RED_LEFTS_RIGHT = 94.0;
+    public final static double RED_LEFTS_LEFT = 128.0;
+    public final static double RED_LEFTS_CENTER = 109.0;
+    public final static double RED_LEFTS_RIGHT = 90.0;
 
 
     //200
@@ -167,10 +167,10 @@ public class AutonomousSecondMain extends OpMode {
                 break;
 
             case 101:
-                if (camera.getCryptoKey() == LEFT || camera.getCryptoKey() == UNKNOWN) {
+                if (camera.getCryptoKey() == LEFT) {
                     glyphOption = LEFT;
                 }
-                if (camera.getCryptoKey() == CENTER) {
+                if (camera.getCryptoKey() == CENTER || camera.getCryptoKey() == UNKNOWN) {
                     glyphOption = CENTER;
                 }
                 if (camera.getCryptoKey() == RIGHT) {
@@ -271,7 +271,7 @@ public class AutonomousSecondMain extends OpMode {
 
             case 109:
                 gyroPID.resetValues(getRuntime());
-                gyroPID.setSetpoint(90);
+                gyroPID.setSetpoint(83);
                // goodGyroPID.resetPid(getRuntime());
                // goodGyroPID.updateSetpoint(90);
                 stateCurrent++;
@@ -289,25 +289,36 @@ public class AutonomousSecondMain extends OpMode {
                         gyroPID.getRightNewPower(0));
                 gyroPID.updatePidValues(gyroSensor.headingGyro(), getRuntime());
                 if (gyroPID.errorCalc <= 0.5 || getStateRuntime() > 6) {
+                    drivetrain.brake();
                     stateCurrent++;
                 }
                 break;
 
             case 111:
+                if (gyroSensor.headingGyro() > gyroPID.setpoint) {
+                    drivetrain.setPowerWithoutAcceleration(-.4, .4);
+                } else if (gyroSensor.headingGyro() < gyroPID.setpoint) {
+                    drivetrain.setPowerWithoutAcceleration(.4,-.4);
+                }
+                else {
+                    stateCurrent++;
+                }
+
+            case 112:
                 drivetrain.brake();
                 if (getStateRuntime() > 1) {
                     stateCurrent++;
                 }
                 break;
 
-            case 112:
+            case 113:
                 drivetrain.setPowerWithoutAcceleration(.1,.1);
                 if (getStateRuntime() > 1.5) {
                     stateCurrent++;
                 }
                 break;
 
-            case 113:
+            case 114:
                 glyphLift.midAuto();
                 drivetrain.setPowerWithoutAcceleration(-.16, -.16);
                 if (getStateRuntime() > .15) {
@@ -316,7 +327,7 @@ public class AutonomousSecondMain extends OpMode {
                 }
                 break;
 
-            case 114:
+            case 115:
                 drivetrain.setPowerWithoutAcceleration(.15,.15);
                 if (getStateRuntime() > 1.2) {
                     drivetrain.setPowerWithoutAcceleration(0,0);
@@ -324,7 +335,7 @@ public class AutonomousSecondMain extends OpMode {
                 }
                 break;
 
-            case 115:
+            case 116:
                 drivetrain.setPowerWithoutAcceleration(-.16,-.16);
                 if (getStateRuntime() > .15) {
                     drivetrain.setPowerWithoutAcceleration(0,0);

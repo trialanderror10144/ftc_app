@@ -8,28 +8,23 @@ import com.qualcomm.robotcore.util.Range;
 
 public class PIDControl {
 
-    private double setpoint;
+    public double setpoint;
 
     private double Kp;
     private double Ki;
     private double Kd;
-    //For tuning??
-    private double Ku;
 
     public double errorCalc;
     private double integral;
     private double derivative;
     private double timePassed;
-    private double timeNew;
     private double pidValues;
 
     //Is this needed???
-    private double proportional;
-
     public PIDControl(double aKp, double aKi, double aKd) {
-        aKp = Kp;
-        aKi = Ki;
-        aKd = Kd;
+        Kp = aKp;
+        Ki = aKi;
+        Kd = aKd;
         resetValues(0);
     }
     //What would the direction be? Left pos = Clockwise

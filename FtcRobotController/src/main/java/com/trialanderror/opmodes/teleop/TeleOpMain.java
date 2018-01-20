@@ -33,7 +33,6 @@ public class TeleOpMain extends OpMode {
 
     @Override
     public void init() {
-
         drivetrain = new Drivetrain((hardwareMap));
         drivetrain.setBrakeModeAuto();
         jewelKnocker = new JewelKnocker((hardwareMap));
@@ -71,7 +70,7 @@ public class TeleOpMain extends OpMode {
             glyphLift.stop();
         }
 
-        
+
         if (slowRelicDrive(gamepad2)) {
             if (gamepad2.dpad_up) {
                 relicGrabber.slowHorizMove();
