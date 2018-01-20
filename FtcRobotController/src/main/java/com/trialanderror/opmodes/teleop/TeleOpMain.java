@@ -70,18 +70,17 @@ public class TeleOpMain extends OpMode {
             glyphLift.stop();
         }
 
-
+        //Relic Grabber (Motor) Control
         if (slowRelicDrive(gamepad2)) {
             if (gamepad2.dpad_up) {
                 relicGrabber.slowHorizMove();
             } else if (gamepad2.dpad_down) {
-                relicGrabber.slowHorixRetract();
+                relicGrabber.slowHorizRetract();
             } else {
                 relicGrabber.noHorizMove();
             }
         }
         else {
-            //Relic Extender/Motor Control
             if (gamepad2.dpad_up) {
                 relicGrabber.horizontalMove();
             } else if (gamepad2.dpad_down) {

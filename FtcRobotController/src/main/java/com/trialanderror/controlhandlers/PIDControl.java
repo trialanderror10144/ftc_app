@@ -2,10 +2,6 @@ package com.trialanderror.controlhandlers;
 
 import com.qualcomm.robotcore.util.Range;
 
-/**
- * Created by Esposito's 9-16 on 1/13/2018.
- */
-
 public class PIDControl {
 
     public double setpoint;
@@ -20,14 +16,13 @@ public class PIDControl {
     private double timePassed;
     private double pidValues;
 
-    //Is this needed???
     public PIDControl(double aKp, double aKi, double aKd) {
         Kp = aKp;
         Ki = aKi;
         Kd = aKd;
         resetValues(0);
     }
-    //What would the direction be? Left pos = Clockwise
+    // Left Positive = Clockwise
     public double getLeftNewPower(double aPower) {
         return Range.clip(aPower + pidValues, -1, 1);
     }

@@ -22,7 +22,6 @@ public class RelicGrabber {
     private double clampPosition = CLOSE_CLAMP;
 
     public RelicGrabber(HardwareMap aHardwareMap) {
-
         extendMotor = aHardwareMap.dcMotor.get("extend");
         grabRelic = aHardwareMap.servo.get("grabr");
         twistRelic = aHardwareMap.servo.get("twistr");
@@ -41,8 +40,12 @@ public class RelicGrabber {
     public void noHorizMove() {
         extendMotor.setPower(0.0);
     }
-    public void slowHorizMove() { extendMotor.setPower(0.35);}
-    public void slowHorixRetract() { extendMotor.setPower(-0.35);}
+    public void slowHorizMove() {
+        extendMotor.setPower(0.35);
+    }
+    public void slowHorizRetract() {
+        extendMotor.setPower(-0.35);
+    }
     public void openRelic() {
         clampPosition = OPEN_CLAMP;
         grabRelic.setPosition(clampPosition);
