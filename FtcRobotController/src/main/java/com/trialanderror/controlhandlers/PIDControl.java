@@ -4,6 +4,10 @@ import com.qualcomm.robotcore.util.Range;
 
 public class PIDControl {
 
+    private int readingsAtSetpoint;
+    private int readingsMarginOfError = 2;
+    private static final int SETPOINT_REACHED_READINGS_THRESHOLD = 10;
+
     public double setpoint;
 
     private double Kp;
@@ -55,8 +59,13 @@ public class PIDControl {
             derivative = (errorCalc / (aTime - timePassed)) ;
         }
 
-
         pidValues = Kp*errorCalc + Ki*integral + Kd*derivative;
 
+        if(aActual < (setpoint + readingsMarginOfError) && aActual > (setpoint - readingsMarginOfError)) readingsAtSetpoint++;
+        else readingsAtSetpoint = 0;
     }
+    public boolean isSetpointReached() {
+        return readingsAtSetpoint >= SETPOINT_REACHED_READINGS_THRESHOLD;
+    }
+
 }

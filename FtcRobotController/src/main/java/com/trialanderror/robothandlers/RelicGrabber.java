@@ -66,12 +66,12 @@ public class RelicGrabber {
         twistRelic.setPosition(twistPosition);
     }
     public void clampSmallDelta() {
-        clampPosition +=.01;
+        clampPosition +=.05;
         clampPosition = Range.clip(clampPosition, OPEN_CLAMP, CLOSE_CLAMP);
         grabRelic.setPosition(clampPosition);
     }
     public void openSmallDelta() {
-        clampPosition -=.01;
+        clampPosition -=.05;
         clampPosition = Range.clip(clampPosition, OPEN_CLAMP, CLOSE_CLAMP);
         grabRelic.setPosition(clampPosition);
     }
