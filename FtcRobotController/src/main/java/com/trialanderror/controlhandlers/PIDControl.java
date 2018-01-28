@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.util.Range;
 public class PIDControl {
 
     private int readingsAtSetpoint;
-    private int readingsMarginOfError = 2;
+    private int marginOfError;
     private static final int SETPOINT_REACHED_READINGS_THRESHOLD = 10;
 
     public double setpoint;
@@ -21,10 +21,9 @@ public class PIDControl {
     private double pidValues;
 
     public PIDControl(double aKp, double aKi, double aKd) {
-        Kp = aKp;
-        Ki = aKi;
-        Kd = aKd;
+        setPidCoefficients(aKp, aKi, aKd);
         resetValues(0);
+        marginOfError = 2;
     }
     // Left Positive = Clockwise
     public double getLeftNewPower(double aPower) {
@@ -41,9 +40,13 @@ public class PIDControl {
         derivative = 0;
 
     }
-
+    public void setPidCoefficients(double aKp, double aKi, double aKd) {
+        Kp = aKp;
+        Ki = aKi;
+        Kd = aKd;
+    }
     public String returnErrorValues() {
-        return "P: " + Kp*errorCalc + " I: " + Ki*integral + " D: " +Kd*derivative;
+        return pidValues + ", " + "P: " + Kp*errorCalc + " I: " + Ki*integral + " D: " +Kd*derivative;
     }
 
     public void setSetpoint(double aValue) {
@@ -61,11 +64,14 @@ public class PIDControl {
 
         pidValues = Kp*errorCalc + Ki*integral + Kd*derivative;
 
-        if(aActual < (setpoint + readingsMarginOfError) && aActual > (setpoint - readingsMarginOfError)) readingsAtSetpoint++;
+        if(aActual < (setpoint + marginOfError) && aActual > (setpoint - marginOfError)) readingsAtSetpoint++;
         else readingsAtSetpoint = 0;
     }
     public boolean isSetpointReached() {
         return readingsAtSetpoint >= SETPOINT_REACHED_READINGS_THRESHOLD;
+    }
+    public void setMarginOfError(int a) {
+        marginOfError = a;
     }
 
 }

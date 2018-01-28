@@ -1,0 +1,67 @@
+package com.trialanderror.hardwarehandlers;
+
+import android.app.Application;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Environment;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+
+public class AndroidPhoneUtil {
+
+    public static Context getContext() {
+        try {
+            final Class<?> activityThreadClass =
+                    Class.forName("android.app.ActivityThread");
+            //find and load the main activity method
+            final Method method = activityThreadClass.getMethod("currentApplication");
+            return (Application) method.invoke(null, (Object[]) null);
+        } catch (final java.lang.Throwable e) {
+            // handle exception
+            return null;
+        }
+    }
+
+    public static String getDataDirectory(Context ctx) {
+        try {
+            return ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).applicationInfo.dataDir;
+        } catch (PackageManager.NameNotFoundException e) {
+            return null;
+        }
+    }
+
+    public static String getWorkingDirectory() {
+        return System.getProperty("user.dir");
+    }
+
+    public static String getDCIMDirectory() {
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
+    }
+
+    public static File createFileOnDevice(String fileDirectory, String fileName, boolean overwrite) throws IOException {
+        fileDirectory = Environment.getExternalStorageDirectory().getAbsolutePath() + fileDirectory;
+        File dir = new File(fileDirectory);
+
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File file = new File(fileDirectory, fileName);
+        // if file doesn't exists, then create it
+        if (!file.exists() || overwrite) {
+            if (file.exists() && overwrite)
+                file.delete();
+            file.createNewFile();
+        } else {
+            int i = 0;
+            while (file.exists()) {
+                file = new File(fileDirectory, fileName + "." + i);
+                i++;
+            }
+            file.createNewFile();
+        }
+        return file;
+    }
+}
+

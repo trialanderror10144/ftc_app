@@ -16,13 +16,20 @@ public class GyroTurnSensor {
         virtualZeroGyro = 0;
         calibrateGyro();
     }
+
     public void resetGyro() {
         virtualZeroGyro = gyroSensor.getIntegratedZValue();
     }
+
     public void calibrateGyro() {
         gyroSensor.calibrate();
     }
+
     public int headingGyro() {
-        return CLOCKWISE*(gyroSensor.getIntegratedZValue() - virtualZeroGyro);
+        return CLOCKWISE * (gyroSensor.getIntegratedZValue() - virtualZeroGyro);
+    }
+
+    public boolean isCalibrating() {
+       return gyroSensor.isCalibrating();
     }
 }

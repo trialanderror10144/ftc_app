@@ -1,5 +1,6 @@
 package com.trialanderror.opmodes.autonomous;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -36,12 +37,11 @@ import static com.trialanderror.fieldhandlers.JewelColors.RED_JEWEL;
 import static com.trialanderror.fieldhandlers.JewelColors.BLUE_JEWEL;;
 import static com.trialanderror.fieldhandlers.PositionToWall.LEFT_SQUARE;
 import static com.trialanderror.fieldhandlers.PositionToWall.RIGHT_SQUARE;
-
-@Autonomous(name = "Auto: Practice Main")
+@Autonomous(name = "Practice Auto")
 public class AutonomousMain extends OpMode {
 
     private Drivetrain drivetrain;
-    private GyroTurnSensor gyroSensor;
+    private ModernRoboticsI2cGyro gyroSensor;
 
     private int stateCurrent;
 
@@ -52,35 +52,22 @@ public class AutonomousMain extends OpMode {
 
     public void init() {
         drivetrain = new Drivetrain((hardwareMap));
-        gyroSensor = new GyroTurnSensor(hardwareMap.gyroSensor.get("gyro"));
-        drivetrain.resetEncoders();
+        gyroSensor = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("gyro");
+        gyroSensor.calibrate();
+
         stateCurrent = 0;
-
     }
-
-
-
     public void loop() {
         switch (stateCurrent) {
-
             case 0:
-                if (drivetrain.getEncodersMagnitude() >= 1000) {
-                    drivetrain.setPowerWithoutAcceleration(0,0);
+                if (getStateRuntime() > 5.5) {
                     stateCurrent++;
-                } else {
-                    drivetrain.setPowerWithoutAcceleration(.08,.08);
                 }
                 break;
+
             case 1:
-                gyroSensor.resetGyro();
-                drivetrain.resetEncoders();
-                if (getStateRuntime() > 5.1) {
-                    stateCurrent++;
-                }
-                break;
-            case 2:
-                if (gyroSensor.headingGyro() <= 75) {
-                    drivetrain.setPowerWithoutAcceleration(.65,-.65);
+                if (gyroSensor.getIntegratedZValue()*-1 <= 82) {
+                    drivetrain.setPowerWithoutAcceleration(.19,-.19);
                 }
                 else {
                     drivetrain.setPowerWithoutAcceleration(0,0);
@@ -91,15 +78,11 @@ public class AutonomousMain extends OpMode {
             default:
                 drivetrain.stop();
         }
-        telemetry.addData("Gyro Heading:", gyroSensor.headingGyro());
-        telemetry.addData("Encoder:", drivetrain.getEncodersMagnitude());
-        telemetry.addData("Encoder Left: ", drivetrain.getEncoderLeft());
-        telemetry.addData("Encoder Right: ", drivetrain.getEncoderRight());
+        telemetry.addData("Gyro Heading:", gyroSensor.getIntegratedZValue()*-1);
     }
         @Override
         public void stop () {
             drivetrain.stop();
-
     }
 
     private double getStateRuntime() {

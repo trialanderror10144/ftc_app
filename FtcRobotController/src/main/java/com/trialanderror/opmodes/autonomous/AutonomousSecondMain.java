@@ -46,8 +46,8 @@ public class AutonomousSecondMain extends OpMode {
     //private GyroTurnSensor otherGyroSensor;
     private PIDControl gyroPID;
     //private GoodPIDControlTBD goodGyroPID;
-    private final static double PID_GYRO_TURN_VALUES[] = new double[]{ 0.006, 0.0, 0.00064 };
-    //.007, 0, .00064
+    private final static double PID_GYRO_TURN_VALUES[] = new double[]{0.0018, 0.0, 0.0005};
+    //.0018, 0.0, 0.0005
 
     private Alliances allianceColor;
     private PositionToWall position;
@@ -109,10 +109,7 @@ public class AutonomousSecondMain extends OpMode {
         backUltra = new PanelRangeSensor((hardwareMap.i2cDevice.get("rsensorfront")), 0x10);
         relicGrabber = new RelicGrabber((hardwareMap));
         gyroSensor = new GyroTurnSensor(hardwareMap.gyroSensor.get("gyro"));
-        //otherGyroSensor = new GyroTurnSensor((hardwareMap.gyroSensor.get("othergyro")));
         gyroPID = new PIDControl(PID_GYRO_TURN_VALUES[0], PID_GYRO_TURN_VALUES[1], PID_GYRO_TURN_VALUES[2]);
-       // goodGyroPID = new GoodPIDControlTBD(PID_GYRO_TURN_VALUES[0], PID_GYRO_TURN_VALUES[1], PID_GYRO_TURN_VALUES[2]);
-
 
         //Creates Select Menu on Robot Controller
         OptionMenu.Builder ParamsBuilder = new OptionMenu.Builder(hardwareMap.appContext);
@@ -242,7 +239,6 @@ public class AutonomousSecondMain extends OpMode {
                     if (backUltra.getUltrasonicReading() >= RED_LEFTS_LEFT) {
                         drivetrain.setPowerWithoutAcceleration(0, 0);
                         gyroSensor.resetGyro();
-                        //otherGyroSensor.resetGyro();
                         stateCurrent++;
                     } else {
                         driveGyroCorrection = PROPORTIONAL_GYRO_SCALAR * gyroSensor.headingGyro();
@@ -254,7 +250,6 @@ public class AutonomousSecondMain extends OpMode {
                     if (backUltra.getUltrasonicReading() >= RED_LEFTS_CENTER) {
                         drivetrain.setPowerWithoutAcceleration(0, 0);
                         gyroSensor.resetGyro();
-                        //otherGyroSensor.resetGyro();
                         stateCurrent++;
                     } else {
                         driveGyroCorrection = PROPORTIONAL_GYRO_SCALAR * gyroSensor.headingGyro();
@@ -265,8 +260,7 @@ public class AutonomousSecondMain extends OpMode {
                 if (glyphOption == RIGHT) {
                     if (backUltra.getUltrasonicReading() >= RED_LEFTS_RIGHT) {
                         drivetrain.setPowerWithoutAcceleration(0, 0);
-                        gyroSensor.resetGyro();
-                        //otherGyroSensor.resetGyro();
+                        gyroSensor.resetGyro();;
                         stateCurrent++;
                     } else {
                         driveGyroCorrection = PROPORTIONAL_GYRO_SCALAR * gyroSensor.headingGyro();
@@ -281,34 +275,39 @@ public class AutonomousSecondMain extends OpMode {
 
             case 110:
                 gyroSensor.calibrateGyro();
-                gyroPID.resetValues(getRuntime());
-                gyroPID.setSetpoint(83);
-                if (getStateRuntime() > 5.5) { stateCurrent++; }
+                stateCurrent++;
                 break;
 
             case 111:
+                gyroPID.resetValues(getRuntime());
+                gyroPID.setSetpoint(85);
+                gyroPID.setMarginOfError(2);
+                if (!gyroSensor.isCalibrating() && getStateRuntime() > 2) { stateCurrent++; }
+                break;
+
+            case 112:
                 drivetrain.setPowerPidCorrection(gyroPID.getLeftNewPower(0),
                         gyroPID.getRightNewPower(0));
                 gyroPID.updatePidValues(gyroSensor.headingGyro(), getRuntime());
 
-                if(gyroPID.isSetpointReached() || getStateRuntime() > 5) stateCurrent++;
+                if(gyroPID.isSetpointReached() || getStateRuntime() > 6) stateCurrent++;
                 break;
 
-            case 112:
+            case 113:
                 drivetrain.brake();
                 if (getStateRuntime() > 1) {
                     stateCurrent++;
                 }
                 break;
 
-            case 113:
+            case 114:
                 drivetrain.setPowerWithoutAcceleration(.1,.1);
                 if (getStateRuntime() > 1.5) {
                     stateCurrent++;
                 }
                 break;
 
-            case 114:
+            case 115:
                 glyphLift.midAuto();
                 drivetrain.setPowerWithoutAcceleration(-.16, -.16);
                 if (getStateRuntime() > .15) {
@@ -317,7 +316,7 @@ public class AutonomousSecondMain extends OpMode {
                 }
                 break;
 
-            case 115:
+            case 116:
                 drivetrain.setPowerWithoutAcceleration(.15,.15);
                 if (getStateRuntime() > 1.2) {
                     drivetrain.setPowerWithoutAcceleration(0,0);
@@ -332,6 +331,16 @@ public class AutonomousSecondMain extends OpMode {
                     stateCurrent++;
                 }
                 break;
+
+
+
+
+
+
+
+
+
+
 
 
 
