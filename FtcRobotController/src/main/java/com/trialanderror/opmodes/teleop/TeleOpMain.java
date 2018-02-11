@@ -2,13 +2,12 @@ package com.trialanderror.opmodes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.trialanderror.robothandlers.Drivetrain;
 import com.trialanderror.robothandlers.GlyphLift;
 import com.trialanderror.robothandlers.JewelKnocker;
 import com.trialanderror.robothandlers.RelicGrabber;
-import com.trialanderror.sensorhandlers.LiftTouchSensor;
+import com.trialanderror.sensorhandlers.MotorTouchSensor;
 
 @TeleOp(name="TeleOp Main")
 public class TeleOpMain extends OpMode {
@@ -20,7 +19,8 @@ public class TeleOpMain extends OpMode {
     private RelicGrabber relicGrabber;
 
     //Defines Sensors
-    private LiftTouchSensor liftTouchSensor;
+    private MotorTouchSensor liftTouchSensor;
+    private MotorTouchSensor relicTouchSensor;
 
     //Defines Values For Power and Threshold
     private static final double STICK_DIGITAL_THRESHOLD = 0.25;
@@ -38,7 +38,8 @@ public class TeleOpMain extends OpMode {
         jewelKnocker = new JewelKnocker((hardwareMap));
         glyphLift = new GlyphLift((hardwareMap));
         relicGrabber = new RelicGrabber((hardwareMap));
-        liftTouchSensor = new LiftTouchSensor((hardwareMap));
+        liftTouchSensor = new MotorTouchSensor((hardwareMap.touchSensor.get("tsensor")));
+        relicTouchSensor = new MotorTouchSensor((hardwareMap.touchSensor.get("gtsensor")));
     }
 
     @Override
@@ -72,7 +73,9 @@ public class TeleOpMain extends OpMode {
 
         //Relic Grabber (Motor) Control
         if (slowRelicDrive(gamepad2)) {
-            if (gamepad2.dpad_up) {
+            if (gamepad2.dpad_down && relicTouchSensor.isLowered()) {
+                relicGrabber.noHorizMove();
+            } else if (gamepad2.dpad_up || (gamepad2.dpad_up && relicTouchSensor.isLowered())) {
                 relicGrabber.slowHorizMove();
             } else if (gamepad2.dpad_down) {
                 relicGrabber.slowHorizRetract();
@@ -81,7 +84,9 @@ public class TeleOpMain extends OpMode {
             }
         }
         else {
-            if (gamepad2.dpad_up) {
+            if (gamepad2.dpad_down && relicTouchSensor.isLowered()) {
+                relicGrabber.noHorizMove();
+            } else if (gamepad2.dpad_up || (gamepad2.dpad_up && relicTouchSensor.isLowered())) {
                 relicGrabber.horizontalMove();
             } else if (gamepad2.dpad_down) {
                 relicGrabber.horizontalRetract();
@@ -111,10 +116,10 @@ public class TeleOpMain extends OpMode {
 
         //x is down, y is up
         if (gamepad2.x) {
-            relicGrabber.twistDeltaRelic(DELTA_SERVO);
+            relicGrabber.twistRelicDown();
         }
         if (gamepad2.y) {
-            relicGrabber.twistDeltaRelic(-DELTA_SERVO);
+            relicGrabber.twistRelicUp();
         }
 
 

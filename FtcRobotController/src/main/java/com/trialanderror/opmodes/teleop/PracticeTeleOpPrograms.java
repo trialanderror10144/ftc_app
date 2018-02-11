@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.trialanderror.robothandlers.GlyphLift;
 import com.trialanderror.robothandlers.JewelKnocker;
-import com.trialanderror.sensorhandlers.LiftTouchSensor;
+import com.trialanderror.sensorhandlers.MotorTouchSensor;
 
 /**
  * Created by Esposito's 9-16 on 11/22/2017.
@@ -23,7 +23,7 @@ public class PracticeTeleOpPrograms extends OpMode {
     private GlyphLift glyphLift;
 
     //Defines Sensors
-    private LiftTouchSensor liftTouchSensor;
+    private MotorTouchSensor motorTouchSensor;
 
     //Defines Values For Power and Threshold
     private static final double STICK_DIGITAL_THRESHOLD = 0.25;
@@ -39,7 +39,7 @@ public class PracticeTeleOpPrograms extends OpMode {
         jewelKnocker = new JewelKnocker((hardwareMap));
         glyphLift = new GlyphLift((hardwareMap));
 
-        liftTouchSensor = new LiftTouchSensor((hardwareMap));
+        //motorTouchSensor = new MotorTouchSensor((hardwareMap));
 
         jewelKnocker.initServoPos();
     }
@@ -64,9 +64,9 @@ public class PracticeTeleOpPrograms extends OpMode {
         }
 
         //Motor Acts in Reverse of Program, JUST DEAL WITH IT
-        if (gamepad1.dpad_down && liftTouchSensor.isLowered()) {
+        if (gamepad1.dpad_down && motorTouchSensor.isLowered()) {
             glyphLift.stop();
-        } else if (gamepad1.dpad_up || (gamepad1.dpad_up && liftTouchSensor.isLowered())) {
+        } else if (gamepad1.dpad_up || (gamepad1.dpad_up && motorTouchSensor.isLowered())) {
             glyphLift.raiseLiftPowerUp();
         } else if (gamepad1.dpad_down) {
             glyphLift.lowerLiftPowerDown();

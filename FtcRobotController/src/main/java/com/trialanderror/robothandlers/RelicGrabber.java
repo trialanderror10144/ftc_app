@@ -16,7 +16,7 @@ public class RelicGrabber {
     //.51
 
     private static final double TWIST_UP = .042;
-    private static final double TWIST_DOWN = 0.1117;
+    private static final double TWIST_DOWN = 0.119;
 
     private double twistPosition;
     private double clampPosition = CLOSE_CLAMP;
@@ -46,6 +46,7 @@ public class RelicGrabber {
     public void slowHorizRetract() {
         extendMotor.setPower(-0.35);
     }
+
     public void openRelic() {
         clampPosition = OPEN_CLAMP;
         grabRelic.setPosition(clampPosition);
@@ -66,12 +67,12 @@ public class RelicGrabber {
         twistRelic.setPosition(twistPosition);
     }
     public void clampSmallDelta() {
-        clampPosition +=.05;
+        clampPosition +=.009;
         clampPosition = Range.clip(clampPosition, OPEN_CLAMP, CLOSE_CLAMP);
         grabRelic.setPosition(clampPosition);
     }
     public void openSmallDelta() {
-        clampPosition -=.05;
+        clampPosition -=.009;
         clampPosition = Range.clip(clampPosition, OPEN_CLAMP, CLOSE_CLAMP);
         grabRelic.setPosition(clampPosition);
     }
